@@ -1,0 +1,3 @@
+sqlalchemy
+MySQL-python
+PyYAML
