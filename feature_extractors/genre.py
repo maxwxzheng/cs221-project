@@ -5,7 +5,6 @@ from models.info_type import GENRE_TYPE_ID
 import logging
 
 class GenreFeatureExtractor(Base):
-    __cache__ = False
     def get_genre(self):
         return self.session.query(
             self.models.MovieInfo.movie_id,
