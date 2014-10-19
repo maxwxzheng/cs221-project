@@ -68,7 +68,7 @@ class FeatureCreator(object):
             logging.info("Generating Base Features for %s (%s)" % (title, rating))
             self.features[int(movie.id)] = {
                 'rating': float(rating),
-                'rating_rounded': round(float(rating)),
+                'rating_rounded': int(round(float(rating))),
                 'title': title,
                 'features': {}
             }
