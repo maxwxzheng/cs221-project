@@ -9,6 +9,10 @@ class Base(object):
     # Override this when you're developing
     __cache__ = True
 
+    # Override if it shouldn't be in the oracle, or should be in the baseline.
+    oracle = False
+    baseline = True
+
     def __init__(self, movie_ids):
         self.session = session
         self.models = models
