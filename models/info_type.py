@@ -9,6 +9,7 @@ VOTES_ID = 100
 RATING = 'rating'
 RATING_ID = 101
 GROSS_ID = 107
+GENRE_TYPE_ID = 3
 
 
 class InfoType(Base):
