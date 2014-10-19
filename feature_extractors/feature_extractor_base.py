@@ -8,6 +8,7 @@ import models
 class Base(object):
     # Override this when you're developing
     __cache__ = True
+    __debug__ = True
 
     def __init__(self, movie_ids):
         self.session = session
