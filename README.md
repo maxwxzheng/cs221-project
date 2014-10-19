@@ -35,13 +35,15 @@ The feature extractor will have the instance variables `self.session`,
 - `self.models`: SQLAlchemy models for each table in the db.
 - `self.movie_ids`: An array of all of the movie ids we're using.
 
-In addition, the feature extractor base class provides a couple of helper
+In addition, the feature extractor base class provides a few helper
 functions:
 
 - `segmented_movie_ids`: this will yield movie_ids in chunks of 500 by default,
   making it a little easier to split up queries.
 - `movies_query`: this is just a base query to get all the movies we care about,
   you can string addional stuff onto this.
+- `with_appearances`: this can be used to get the number of times a feature
+  appears in the dataset, and eliminate features that don't appear enough.
 
 Checkout the `KeywordFeatureExtractor` for a decent example of what the logic
 should look like.

@@ -1,4 +1,5 @@
 import os
+from collections import defaultdict
 
 from cache import Cache
 from session import session
@@ -45,3 +46,23 @@ class Base(object):
         ).filter(
             self.models.Movie.id.in_(self.movie_ids)
         )
+
+    def with_appearances(self, iter, min_appearances, count_of, appears_in):
+        """Use this method to count the number of appearances the count_of
+        appears in appears_in, removing entries that don't appear at least
+        min_appearances times.
+
+        count_of - this should be a lambda to pull an identifier out of each
+            item of the iterator
+        appears_in - this should be a lambda used to pull what the count_of
+            appeared in for each item of the iterator
+        """
+        appearances = defaultdict(set)
+        iter = list(iter)
+        for item in iter:
+            appearances[count_of(item)].add(appears_in(item))
+
+        for item in iter:
+            length = len(appearances[count_of(item)])
+            if length >= min_appearances:
+                yield tuple(list(item) + [length])
