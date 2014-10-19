@@ -33,7 +33,7 @@ class MovieFilter(object):
 
     HAS_US_GROSS = (
         models.MovieInfo,
-        (models.MovieInfo.info_type_id==GROSS_ID, models.MovieInfo.info.like('%$%'))
+        (models.MovieInfo.info_type_id==GROSS_ID, models.MovieInfo.info.like('%$% (USA)%'))
     )
 
     CONDITIONS = (HAS_RATING, HAS_US_RELEASE, HAS_1000_VOTES, HAS_US_GROSS)

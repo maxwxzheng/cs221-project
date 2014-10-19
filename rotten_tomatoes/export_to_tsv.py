@@ -22,12 +22,14 @@ def process_file(filename):
     j = json.load(f)
     movie = j['movies'][0]
     ratings = movie['ratings']
+    rt_title = movie['title']
     return '\t'.join([movie_id,
             movie['id'],
             str(ratings.get('critics_score', 0)),
             str(ratings.get('critics_rating', 0)),
             str(ratings.get('audience_score', 0)),
             str(ratings.get('audience_rating', 0)),
+            rt_title,
             ])
 
 if __name__ == '__main__':
@@ -47,6 +49,7 @@ if __name__ == '__main__':
              'critics_rating',
              'audience_score',
              'audience_rating',
+             'rt_title',
             ]))
     f.write('\n')
     cnt = 0
