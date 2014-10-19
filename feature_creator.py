@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import inspect
+import os
 
 from cache import Cache
 from session import session
+
 from movie_filter import MovieFilter
 import models
 import feature_extractors
 from models.info_type import RATING_ID
-import os
 from helpers import encode
 
 

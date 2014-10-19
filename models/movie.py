@@ -1,7 +1,9 @@
-from base import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, Unicode
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.associationproxy import association_proxy
+
+from base import Base
+
 
 class Movie(Base):
     __tablename__ = 'title'

@@ -1,6 +1,8 @@
-from base import Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
+
+from base import Base
+
 
 """MovieInfo contains everything but
 'bottom 10 rank', 'rating', 'top 250 rank',

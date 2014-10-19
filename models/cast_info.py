@@ -1,6 +1,7 @@
-from base import Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
+
+from base import Base
 
 
 """This table can be used to join people to movies"""

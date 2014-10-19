@@ -1,6 +1,8 @@
-from base import Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship, backref
+
+from base import Base
+
 
 class MovieCompanies(Base):
     __tablename__ = 'movie_companies'

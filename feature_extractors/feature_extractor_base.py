@@ -1,7 +1,9 @@
+import os
+
 from cache import Cache
 from session import session
 import models
-import os
+
 
 class Base(object):
     # Override this when you're developing

@@ -1,6 +1,8 @@
-from base import Base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship, backref
+
+from base import Base
+
 
 """This table doesn't seem particularly useful.  Looks like it just can be used
 to tell if a movies cast and crew is complete or complete and verified"""
