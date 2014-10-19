@@ -22,4 +22,4 @@ class Cache(object):
     @classmethod
     def save_file(cls, filename, contents):
         with open(filename, 'w') as f:
-            f.write(json.dumps(contents, encoding="utf-8"))
+            f.write(json.dumps(contents, indent=4, encoding="utf-8"))
