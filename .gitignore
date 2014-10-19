@@ -3,4 +3,4 @@
 data/features.json
 config.yaml
 *.pyc
-
+*.log

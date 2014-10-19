@@ -1,3 +1,5 @@
+import logging
+
 from feature_extractor_base import Base
 from helpers import encode
 
@@ -26,8 +28,10 @@ class CastFeatureExtractor(Base):
         for movie_id, person_id, role_id, role, name in self.get_cast():
             name = encode(name)
             role = encode(role)
-            if self.__debug__:
-                print "Extracted Actor: ", movie_id, person_id, role_id, role, name
+            logging.debug(
+                "Extracted Actor: %s %s %s %s %s" %
+                (movie_id, person_id, role_id, role, name)
+            )
             if features.get(movie_id) is None:
                 features[movie_id] = {}
             features[movie_id]['cast_%s_%s' % (person_id, role_id)] = 1

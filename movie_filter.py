@@ -1,3 +1,4 @@
+import logging
 import math
 import os
 import random
@@ -55,7 +56,7 @@ class MovieFilter(object):
             Cache.save_file(self.DEV_IDS_PATH, dev_ids)
             Cache.save_file(self.TEST_IDS_PATH, test_ids)
 
-        print "Loaded %s Movie IDs" % (len(movie_ids))
+        logging.info("Loaded %s Movie IDs" % (len(movie_ids)))
 
         return movie_ids
 
