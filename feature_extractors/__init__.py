@@ -1,2 +1,3 @@
 from cast import CastFeatureExtractor
 from keywords import KeywordFeatureExtractor
+from genre import GenreFeatureExtractor
