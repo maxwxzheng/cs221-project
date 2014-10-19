@@ -19,3 +19,4 @@ from models.movie_link import MovieLink
 from models.person import Person
 from models.person_info import PersonInfo
 from models.role import Role
+from models.rt_ratings import RtRatings
