@@ -1,5 +1,6 @@
 .DS_Store
 .idea
-data
+data/features.json
 config.yaml
+*.pyc
 
