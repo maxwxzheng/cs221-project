@@ -5,7 +5,11 @@ from helpers import encode
 
 
 class CastFeatureExtractor(Base):
+    MINIMUM_APPEARANCES = 2
+
     def get_cast(self):
+        logging.debug("These queries will take a few mins to run.")
+
         return self.session.query(
             self.models.CastInfo.movie_id,
             self.models.CastInfo.person_id,
@@ -25,12 +29,18 @@ class CastFeatureExtractor(Base):
 
     def extract(self):
         features = {}
-        for movie_id, person_id, role_id, role, name in self.get_cast():
+        # appearances is how many movies the person has appeared in
+        for movie_id, person_id, role_id, role, name, appearances in self.with_appearances(
+            self.get_cast(),
+            self.MINIMUM_APPEARANCES,
+            lambda x: x[1],  # count of: person_id
+            lambda x: x[0]   # that appears in: movie_id
+        ):
             name = encode(name)
             role = encode(role)
             logging.debug(
-                "Extracted Actor: %s %s %s %s %s" %
-                (movie_id, person_id, role_id, role, name)
+                "Extracted Actor: %s %s %s %s %s %s" %
+                (movie_id, person_id, role_id, role, name, appearances)
             )
             if features.get(movie_id) is None:
                 features[movie_id] = {}

@@ -35,16 +35,22 @@ The feature extractor will have the instance variables `self.session`,
 - `self.models`: SQLAlchemy models for each table in the db.
 - `self.movie_ids`: An array of all of the movie ids we're using.
 
-In addition, the feature extractor base class provides a couple of helper
+In addition, the feature extractor base class provides a few helper
 functions:
 
 - `segmented_movie_ids`: this will yield movie_ids in chunks of 500 by default,
   making it a little easier to split up queries.
 - `movies_query`: this is just a base query to get all the movies we care about,
   you can string addional stuff onto this.
+- `with_appearances`: this can be used to get the number of times a feature
+  appears in the dataset, and eliminate features that don't appear enough.
 
 Checkout the `KeywordFeatureExtractor` for a decent example of what the logic
 should look like.
+
+By default, FeatureExtractors are included in the baseline, and not exclusive
+to the oracle.  To add a feature to the oracle, set `oracle = True` in the
+feature extractors class.
 
 Setup
 -----
@@ -62,6 +68,18 @@ Just run the feature_creator.py file.
     python feature_creator.py
 
 ID's for dev and test set will be in data folder, as will features.json.
+
+
+Logging
+-------
+
+Use the python logging module.
+
+    import logging
+    logging.debug("Some log message")
+
+By default, it will log in feature_creator.log.  Set `--verbose` to print
+logging messages to stdout.
 
 
 SQLAlchemy

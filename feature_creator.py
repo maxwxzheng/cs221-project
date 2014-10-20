@@ -3,12 +3,16 @@
 Feature Creator
 
 Usage:
-  feature_creator.py [options]
+  feature_creator.py [--baseline | --oracle] [options]
 
 Options:
   -h --help             Show this screen.
   --version             Version number.
   --verbose             Print output to STDOUT
+
+Feature Groups:
+  --baseline            Extract only baseline features.
+  --oracle              Extract only oracle features.
 """
 
 import inspect
@@ -36,10 +40,7 @@ class FeatureCreator(object):
         self.configure()
         self.movie_ids = MovieFilter().load_feature_ids()
         self.features = {}
-        self.feature_extractors = []
-        for name, obj in inspect.getmembers(feature_extractors):
-            if inspect.isclass(obj):
-                self.feature_extractors.append(obj)
+        self._load_feature_extractors()
 
     def run(self):
         self.generate_feature_base()
@@ -47,8 +48,8 @@ class FeatureCreator(object):
         self.save_features()
 
     def configure(self):
-        arguments = docopt(__doc__, version='0.0.1')
-        if arguments['--verbose']:
+        self.arguments = docopt(__doc__, version='0.0.1')
+        if self.arguments['--verbose']:
             logging.basicConfig(
                 stream=sys.stdout,
                 format=self.LOGGING_FORMAT,
@@ -67,7 +68,7 @@ class FeatureCreator(object):
             logging.info("Generating Base Features for %s (%s)" % (title, rating))
             self.features[int(movie.id)] = {
                 'rating': float(rating),
-                'rating_rounded': round(float(rating)),
+                'rating_rounded': int(round(float(rating))),
                 'title': title,
                 'features': {}
             }
@@ -89,6 +90,23 @@ class FeatureCreator(object):
             models.MovieInfoIDX.info_type_id==RATING_ID,
             models.Movie.id.in_(self.movie_ids)
         )
+
+    def _load_feature_extractors(self):
+        self.feature_extractors = []
+        for name, obj in inspect.getmembers(feature_extractors):
+            if inspect.isclass(obj):
+                if self.arguments['--oracle']:
+                    # Add everything
+                    self.feature_extractors.append(obj)
+                elif self.arguments['--baseline']:
+                    # It's not an oracle and it is a baseline
+                    if not obj.oracle and obj.baseline:
+                        self.feature_extractors.append(obj)
+                else:
+                    # Skip oracles
+                    if not obj.oracle:
+                        self.feature_extractors.append(obj)
+        logging.debug("Using feature extractors: %s", self.feature_extractors)
 
 
 if __name__ == '__main__':
