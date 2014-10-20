@@ -106,6 +106,7 @@ class FeatureCreator(object):
                     # Skip oracles
                     if not obj.oracle:
                         self.feature_extractors.append(obj)
+        logging.debug("Using feature extractors: %s", self.feature_extractors)
 
 
 if __name__ == '__main__':
