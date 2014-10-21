@@ -1,6 +1,7 @@
 .DS_Store
 .idea
 data/features.json
+data/weights.json
 config.yaml
 *.pyc
 *.log
