@@ -18,7 +18,7 @@
 
 \documentclass[journal]{IEEEtran}
 \usepackage{blindtext}
-\usepackage{graphicx}
+\usepackage{graphicx, amsmath, amssymb}
 
 % Some very useful LaTeX packages include:
 % (uncomment the ones you want to load)
@@ -360,10 +360,9 @@
 
 
 \begin{abstract}
-The project aims to explore machine learning methods to predict a movie's
-critical success prior to it's release, i.e. based solely on metadata available
-about the movie. The code for this project can be found at
-\texttt{\url{https://github.com/jcnnghm/cs221-project}}
+The project aims to explore machine learning methods to predict a movie's critical success prior 
+to it's release, i.e. based solely on metadata available about the movie. The code for this project 
+can be found at \texttt{\url{https://github.com/jcnnghm/cs221-project}}
 \end{abstract}
 
 
@@ -410,17 +409,42 @@ Our dataset is the list of all movies from IMDb that fulfill the following prope
 	\item Generated gross earnings in the US
 	\item Has at least 1,000 user votes to rate the movie
 \end{itemize}
+
 \par After pruning the database of 3 million entries, we are left with 9888
 movies which is a reasonable number for our algorithm sot run on. Limiting the
 data to movies with a reasonable number of user votes also ensures that the
 rating data is not too noisy. We save 20\% of the data for testing, and use the
 rest for development.
 
+\subsection{Concrete Example of Input and Output}
+An abbreviated concrete example input to our algorithm for the movie \textit{Winnie the Pooh} is:
+\begin{align*}
+    "301&4657": \{ \\
+        &"rating": 7.3,\\
+        &"features": \{\\
+        & \ \ \ \ "based-on-children's-book": 1,\\
+        & \ \ \ \ "disney-animated-feature": 1,\\
+        & \ \ \ \ "owl": 1,\\
+        & \ \ \ \ "Lasseter,John\_producer": 1,\\
+        & \ \ \ \ "Luckey,Bud\_actor": 1,\\
+        & \ \ \ \ "character-name-in-title": 1,\\
+        & \ \ \ \ "Klein,Sebastian\_actor": 1,\\
+        & \ \ \ \ "sequel": 1,\\
+        & \ \ \ \ "genere\_Family": 1,\\
+        & \ \ \ \ "Cummings,Jim\_actor": 1,\\
+        & \ \ \ \ "rabbit": 1,\\
+        & \ \ \ \ "genere\_Comedy": 1,\\
+        & \ \ \ \ "friendship": 1,\\
+        & \ \ \ \ "genere\_Animation": 1,\\
+        & \ \ \ \ "tiger": 1,\\
+        & \ \ \ \ "Mitchell,Nicole\_writer": 1,\\
+        &\},\\
+    \}  &
+\end{align*}
+The output is simply the predicted rating, in this case $ 7.324 $, after training with the features from the input.
+
 \subsection{Implementation}
-We started by converting the IMDb dataset \cite{imdb_api} into MySQL to allow
-us to quickly explore the dataset and to speed up development. [Justin, more
-details to add here?]. We also cross referenced our data set with critic and
-audience ratings from Rotten Tomatoes using their API \cite{rt_api}.
+We started by importing the IMDb dataset \cite{imdb_api} into MySQL to allow us to quickly explore the dataset and to speed up development. We built a framework to make it relatively easy to build feature extractors, whose output could be merged together and fed as input into our algorithm. We also cross referenced our data set with critic and audience ratings from Rotten Tomatoes using their API \cite{rt_api}.
 \\
 \par We then created feature extractors for the metadata available in the
 dataset. In order to reduce the feature vector size, we filter out
@@ -436,6 +460,13 @@ feature contributes equally to the final result.
 \par For both the baseline and oracle, we used Stochastic Gradient Descent
 using Linear Regression to predict the user rating of a movie on IMDb (on a
 scale of 0 - 10) with 100 iterations and $\eta$ of 0.001.
+
+\subsection{Evaluation Metric}
+We used the standard deviation of the predicted values from the actual values, calculated as
+
+$$ \sqrt{\frac{\sum_{i=1}^n(\text{Predicted}_i-\text{Actual}_i)^2}{n}} $$
+
+
 
 \section{Preliminary results}
 \subsection{Baseline}
@@ -458,21 +489,20 @@ For our oracle, we added additional features which are movie data available
 	\item Number of votes for the ratings
 \end{itemize}
 
-This results in a sample standard deviation of of 0.03 on the training data,
-and 0.34 on the test data.
+This results in a sample standard deviation of of 0.03 on the training data, and 0.34 on the test data.
 \\
-\par We had initially added critic and audience ratings from Rotten Tomatoes,
-but it produced unexpected results, namely critic scores were negative weights
-and negative audience ratings had the opposite effect (movies rated
-\emph{Spilled} had larger weights than \emph{Upright})
+\par We had initially added critic and audience ratings from Rotten Tomatoes, but it produced unexpected results, namely critic scores were negative weights and negative audience ratings had the opposite effect (movies rated \emph{Spilled} had larger weights than \emph{Upright})
+
+\section{Next Steps}
+
+\subsection{Improve Features}
+We will extract more features from IMDB database such as budget, release month, etc. We will also try to construct more advanced features from current features such as combinations of actor and actress, combinations of director and screenwriter, etc. This step will involve a lot of feature tuning and experimentation.
+
+\subsection{Improve Models}
+We will try different Machine Learning models to identify the best model for this problem. Models we plan to experiment with include Multiclass Classification, Neural Network, Support Vector Machine, etc. This step will involve a lot of error analysis and tuning on models and algorithms.
  
 \section{Challenges}
-It would be interesting to see if different markets behave differently. Our
-dataset only includes movies released in the US; how would our system change if
-data from other markets were included in both the training and test detasets?
-Our dataset is also relatively small; would adding more data improve our error
-rates? Finally, how can we model cultural familiarity which is known to be a
-major predictor of success \cite{marketing}?
+It would be interesting to see if different markets behave differently. Our dataset only includes movies released in the US; how would our system change if data from other markets were included in both the training and test detasets? Our dataset is also relatively small; would adding more data improve our error rates? Finally, how can we model cultural familiarity which is known to be a major predictor of success \cite{marketing}?
 
 
 
@@ -497,19 +527,17 @@ Office and Profitability: An Interrelationship Approach} \hskip 1em plus 0.5em
 minus 0.4em\relax Review of Managerial Science, 2006.
 \bibitem{greenlight}
 B.~Deniz and R.~B.~Hasbrouck, \emph{WHEN TO GREENLIGHT:
-Examining the Pre-release Factors that Determine Future Box Office Success of a
-Movie in the United States} \hskip 1em plus 0.5em minus 0.4em\relax
-International Journal of Economics and Management Sciences, 2012.
+Examining the Pre-release Factors that Determine Future Box Office Success of a Movie in the United States}
+\hskip 1em plus 0.5em minus 0.4em\relax International Journal of Economics and Management Sciences, 2012.
 \bibitem{hitorflop}
 D.~Cocuzzo and S.~Wu, \emph{Hit or Flop: Box Office Prediction for Feature
 Films}\hskip 1em plus
   0.5em minus 0.4em\relax Stanford CS 229 project, Dec 2013.
 \bibitem{cooper}
-S.~Mevawala and S.~Phadke, \emph{BoxOffice: Machine Learning Methods for
-Predicting Audience Film Ratings}\hskip 1em plus 0.5em minus 0.4em\relax The
-Cooper Union for the Advancement of Science and Art.
+S.~Mevawala and S.~Phadke, \emph{BoxOffice: Machine Learning Methods for Predicting Audience Film Ratings}\hskip 1em plus
+  0.5em minus 0.4em\relax The Cooper Union for the Advancement of Science and Art.
 \bibitem{imdb_api}
-\texttt{\url{}}
+\texttt{\url{http://www.imdb.com/interfaces}}
 \bibitem{rt_api}
 \texttt{\url{http://developer.rottentomatoes.com}}
 
