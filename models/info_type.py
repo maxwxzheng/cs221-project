@@ -10,6 +10,7 @@ RATING = 'rating'
 RATING_ID = 101
 GROSS_ID = 107
 GENRE_TYPE_ID = 3
+BUDGET_TYPE_ID = 105
 
 
 class InfoType(Base):
