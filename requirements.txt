@@ -1,3 +1,5 @@
 sqlalchemy
 MySQL-python
 PyYAML
+ipdb
+docopt
