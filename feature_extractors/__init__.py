@@ -1,4 +1,5 @@
 from budget import BudgetFeatureExtractor
+from budget_bucketized import BudgetBucketizedFeatureExtractor
 from cast import CastFeatureExtractor
 from genre import GenreFeatureExtractor
 from gross import GrossFeatureExtractor

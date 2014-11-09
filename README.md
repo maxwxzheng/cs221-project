@@ -65,9 +65,11 @@ Running This
 
 Just run the feature_creator.py file.
 
-    python feature_creator.py
+    python feature_creator.py --baseline
 
 ID's for dev and test set will be in data folder, as will features.json.
+
+To skip feature combinators, add --skip_combinators
 
 
 Logging

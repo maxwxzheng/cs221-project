@@ -28,6 +28,7 @@ from session import session
 from movie_filter import MovieFilter
 import models
 import feature_extractors
+import feature_extractors.combinators
 from models.info_type import RATING_ID
 from helpers import encode
 
@@ -77,6 +78,9 @@ class FeatureCreator(object):
         for feature_extractor in self.feature_extractors:
             for movie_id, features in feature_extractor(self.movie_ids).extract_cached().iteritems():
                 self.features[int(movie_id)]['features'].update(features)
+        for combinator in self.feature_extractor_combinators:
+            for movie_id, feature in self.features.iteritems():
+                combinator.combine(movie_id, feature['features'])
 
     def save_features(self):
         Cache.save_file(self.FEATURES_PATH, self.features)
@@ -106,7 +110,11 @@ class FeatureCreator(object):
                     # Skip oracles
                     if not obj.oracle:
                         self.feature_extractors.append(obj)
-        logging.debug("Using feature extractors: %s", self.feature_extractors)
+        self.feature_extractor_combinators = []
+        if '--skip_combinators' not in self.arguments:
+            for name, obj in inspect.getmembers(feature_extractors.combinators):
+                if inspect.isclass(obj):
+                    self.feature_extractor_combinators.append(obj())
 
 
 if __name__ == '__main__':
