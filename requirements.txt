@@ -3,3 +3,6 @@ MySQL-python
 PyYAML
 ipdb
 docopt
+pybrain
+numpy
+scipy
