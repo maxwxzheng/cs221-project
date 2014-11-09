@@ -54,6 +54,7 @@ class FannDataGenerator(object):
 
                 if i <= self.MINIMAL_SIZE:
                     self.write_features_and_rating(minimal_file, full_feature_str, features['rating'])
+
                 self.write_features_and_rating(file, full_feature_str, features['rating'])
 
         logging.info("Features vectorized.")
@@ -61,7 +62,8 @@ class FannDataGenerator(object):
     def write_features_and_rating(self, file, feature_str, rating):
         file.write(feature_str)
         file.write("\n")
-        file.write(str(rating))
+        # Convert to a 0 - 1.0 value
+        file.write(str(rating / 10.0))
         file.write("\n")
 
 
