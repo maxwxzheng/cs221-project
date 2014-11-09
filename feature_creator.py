@@ -111,7 +111,7 @@ class FeatureCreator(object):
                     if not obj.oracle:
                         self.feature_extractors.append(obj)
         self.feature_extractor_combinators = []
-        if self.arguments['--combine']:
+        if '--skip_combinators' not in self.arguments:
             for name, obj in inspect.getmembers(feature_extractors.combinators):
                 if inspect.isclass(obj):
                     self.feature_extractor_combinators.append(obj())
