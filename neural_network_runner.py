@@ -26,7 +26,7 @@ class NeuralNetworkRunner(object):
         self.dev_movie_ids = set(json.load(open('data/dev.json')))
         self.test_movie_ids = set(json.load(open('data/test.json')))
 
-        self.data = dict((k,self.data[unicode(k)]) for k in (list(self.dev_movie_ids)[0:900] + list(self.test_movie_ids)[0:100]))
+        # self.data = dict((k,self.data[unicode(k)]) for k in (list(self.dev_movie_ids)[0:900] + list(self.test_movie_ids)[0:100]))
 
         # Transforms the data so they can be used by pybrain.
         logging.info("Loading feature keys...")
@@ -63,7 +63,7 @@ class NeuralNetworkRunner(object):
 
         net = buildNetwork(len(self.feature_keys), 100, 100, 1, bias=True)
         trainer = BackpropTrainer(net, dev_set)
-        print trainer.trainUntilConvergence(maxEpochs=100, verbose=True)
+        print trainer.trainUntilConvergence(maxEpochs=10000, verbose=True)
 
 
 if __name__ == '__main__':
