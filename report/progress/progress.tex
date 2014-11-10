@@ -348,13 +348,27 @@ release.
 \scalebox{0.55}{\includegraphics{ratings.eps}}
 
 \section{System design}
-\blindtext
+Our system is composed of a feature creator system, a snapshot of the IMDb dataset,
+and a variety of learning algorithms that operate on the information exported by
+the feature creator.  The feature creator provides a framework that allows sub-component
+feature extractors to interact with the IMDb dataset, stored in MySQL.  The feature 
+creator calls each extractor in turn for each of the movies we've selected for our
+dev and test sets, and merges their output features into a sparse feature vector for
+each movie.  The feature vectors are stored in JSON so that they can be easily
+post-processed for use with different algorithms. \\
+
+\includegraphics[width=8cm]{charts/system.png}
+
+Each algorithm is responsible for transforming the data to the format that it requires.
+The neural network, for example, converts the sparse vectors from the feature creator
+into a dense representation that can be consumed by FANN, a neural network library.  Each
+component is modular, so the output of some algorithms can potentially be combined with others.
 
 \section{Features}
-\blindtext
+
+\scalebox{0.55}{\includegraphics{charts/features_without_cross_chart.eps}}
 
 \scalebox{0.55}{\includegraphics{charts/features_with_cross_chart.eps}}
-\scalebox{0.55}{\includegraphics{charts/features_without_cross_chart.eps}}
 
 \subsection{Budget}
 \blindtext
