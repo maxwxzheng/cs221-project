@@ -2,16 +2,19 @@ import json
 import os
 import helpers
 from sklearn import linear_model
+from sklearn import svm
 from cache import Cache
 import logging
 import sys
 import time
+import pickle
 
 class ScikitLearnRunner(object):
     def run(self):
         self.load_data()
 
-        self.run_model(linear_model.LinearRegression(), "linear regression")
+        self.run_model(linear_model.LinearRegression(), "linear_regression")
+        #self.run_model(svm.SVR(), "svm")
 
     def load_data(self):
         self.data = json.load(open('data/features.json'))
@@ -39,6 +42,11 @@ class ScikitLearnRunner(object):
         logging.info("Predicting using model %s done! Took %s seconds." % (model_name, time.time() - start))
 
         helpers.standard_eror(predictions, self.predict_labels)
+
+        # Write result to file
+        f = open('data/result/%s' % model_name, 'w')
+        f.write(pickle.dumps(model))
+        f.close()
 
 if __name__ == '__main__':
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
