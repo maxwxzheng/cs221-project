@@ -10,12 +10,15 @@ desired_error = 0.0001
 max_iterations = 100
 iterations_between_reports = 1
 
+ann = libfann.neural_net()
+ann.create_from_file("minimal.net")
+
 train_data = libfann.training_data()
 train_data.read_train_from_file("data/dev.data")
 train_data.scale_train_data(0, 1)
 
-ann = libfann.neural_net()
-ann.create_sparse_array(connection_rate, (train_data.num_input_train_data(), 20, 10, train_data.num_output_train_data()))
+# ann = libfann.neural_net()
+# ann.create_sparse_array(connection_rate, (train_data.num_input_train_data(), 20, 10, train_data.num_output_train_data()))
 ann.set_learning_rate(learning_rate)
 ann.set_activation_function_output(libfann.SIGMOID)
 
