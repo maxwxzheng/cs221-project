@@ -181,7 +181,7 @@
 % IEEEtran.cls handling of captions and this will result in nonIEEE style
 % figure/table captions. To prevent this problem, be sure and preload
 % caption.sty with its "caption=false" package option. This is will preserve
-% IEEEtran.cls handing of captions. Version 1.3 (2005/06/28) and later 
+% IEEEtran.cls handing of captions. Version 1.3 (2005/06/28) and later
 % (recommended due to many improvements over 1.2) of subfig.sty supports
 % the caption=false option directly:
 %\usepackage[caption=false,font=footnotesize]{subfig}
@@ -267,7 +267,7 @@
 % http://www.ctan.org/tex-archive/macros/latex/contrib/endfloat/
 %
 % The IEEEtran \ifCLASSOPTIONcaptionsoff conditional can also be used
-% later in the document, say, to conditionally put the References on a 
+% later in the document, say, to conditionally put the References on a
 % page by themselves.
 
 
@@ -323,8 +323,8 @@
 
 
 \begin{abstract}
-The project aims to explore machine learning methods to predict a movie's critical success prior 
-to it's release, i.e. based solely on metadata available about the movie. The code for this project 
+The project aims to explore machine learning methods to predict a movie's critical success prior
+to it's release, i.e. based solely on metadata available about the movie. The code for this project
 can be found at \texttt{\url{https://github.com/jcnnghm/cs221-project}}
 \end{abstract}
 
@@ -350,24 +350,31 @@ release.
 \section{System design}
 Our system is composed of a feature creator system, a snapshot of the IMDb dataset,
 and a variety of learning algorithms that operate on the information exported by
-the feature creator.  The feature creator provides a framework that allows sub-component
-feature extractors to interact with the IMDb dataset, stored in MySQL.  The feature 
-creator calls each extractor in turn for each of the movies we've selected for our
+the feature creator.
+\par The feature creator provides a framework that allows sub-component
+feature extractors to interact with the IMDb dataset, stored in MySQL.  The feature
+creator calls each extractor ($E_i$ in the diagram below) in turn for each of the movies we've selected for our
 dev and test sets, and merges their output features into a sparse feature vector for
-each movie.  The feature vectors are stored in JSON so that they can be easily
+each movie.  An additional combinator step is applied to generate feature
+combinations, e.g. \{movie director $\times$ movie actors\}.
+The creator is highly configurable so that extractors and combinators can easily be selectively enabled or disabled,
+and includes a caching layer to reduce the load on MySQL and speed up processing.
+The feature vectors are stored in JSON so that they can be easily
 post-processed for use with different algorithms. \\
 
-\includegraphics[width=6cm]{charts/system.png}
+\begin{center}
+    \includegraphics[width=6cm]{charts/system.png}
+\end{center}
 
 Each algorithm is responsible for transforming the data to the format that it requires.
 The neural network, for example, converts the sparse vectors from the feature creator
-into a dense representation that can be consumed by FANN, a neural network library.  Each
+into a dense representation that can be consumed by FANN \cite{fann}, a neural network library.  Each
 component is modular, so the output of some algorithms can potentially be combined with others.
 
 \section{Features}
 The feature creator system extracts raw features, and then combines some features with others,
 like actors with directors, to form compound "combination" features.  In total, there are about 192,000
-unique features without combined features for our data set.  With combined features, that number 
+unique features without combined features for our data set.  With combined features, that number
 balloons to over 800,000.
 
 \scalebox{0.55}{\includegraphics{charts/features_without_cross_chart.eps}}
@@ -380,8 +387,8 @@ densely consumes approximately 3.5GB and 14GB respectively. \\
 
 \textbf{INSERT HISTOGRAM OF UNIQUE FEATURE TO MOVIE COUNT} \\ \\
 
-We plan to prune out features that are very specific to reduce the iteration time for our 
-algorithms and the likelihood of over-fitting.  We have also started to consider 
+We plan to prune out features that are very specific to reduce the iteration time for our
+algorithms and the likelihood of over-fitting.  We have also started to consider
 using principal component analysis (PCA) to further reduce our data sizes.
 
 \subsection{Budget}
@@ -412,6 +419,9 @@ using principal component analysis (PCA) to further reduce our data sizes.
 \blindtext
 
 \section{Complete Algorithm}
+\blindtext
+
+\section{Next steps}
 \blindtext
 
 % references section
