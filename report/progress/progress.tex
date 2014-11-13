@@ -366,6 +366,8 @@ rest for development.
 
 \scalebox{0.55}{\includegraphics{ratings.eps}}
 
+\textbf{[XXX insert some analysis about the chart]}
+
 \section{System design}
 Our system is composed of a feature creator system, a snapshot of the IMDb dataset,
 and a variety of learning algorithms that operate on the information exported by
@@ -399,10 +401,10 @@ Below is a detailed description of each class of features we include.
 \subsection{Budget}
 The Budget feature extractor extracts a weighted feature, within the domain of
 \$1 to \$300M.  Since the data is crowdsourced, there are multiple specified
-budgets for the movie.  We have budget data for 5,278 movies. We only consider
-movies with budgest in US dollars, and we take the largest proposed budget.  We
-also consider using budgets in two ways -- using raw dollar values or bucketing
-the value into \$5M chunks (as indicator variables).
+budgets for the movie.  We only consider movies with budgest in US dollars, and
+we take the largest proposed budget.  We also consider using budgets in two
+ways -- using raw dollar values or bucketing the value into \$5M chunks (as
+indicator variables).
 
 \begin{align*}
         \{ \ \ & \\
@@ -430,8 +432,7 @@ an actor and director.  The cast roles which we include are:
 	\item Production designer
 	\item Miscellaneous crew
 \end{itemize}
-This results in 169,973 unique features across 9,883 movies, with an average of
-72 features per movie. As a next step, we can analyze the importance of each
+As a next step, we can analyze the importance of each
 role: presumably miscellaneous crew will not be predictive of a movie's
 success.
 
@@ -447,8 +448,7 @@ success.
 
 \subsection{Genre}
 Genre features are indicator features that are activated for each
-genre associated with a movie in the IMDb dataset. We have 25 genres across
-9,885 movies, with an average of 2 genres per movie.
+genre associated with a movie in the IMDb dataset.
 
 \begin{align*}
         \{\ \ &\\
@@ -461,8 +461,7 @@ genre associated with a movie in the IMDb dataset. We have 25 genres across
 \subsection{Keywords}
 Keyword features are indicator features that are activated for
 each searchable tag that is associated with a movie in the
-IMDb dataset. We have 11,701 unique keywords across 9,774 movies, with an
-average of 75 features per movie.
+IMDb dataset.
 
 \begin{align*}
         \{\ \ &\\
@@ -477,9 +476,7 @@ average of 75 features per movie.
 \subsection{Release Date}
 Release dates are also indicator features that are activated for each release
 in the US across festivals and premieres. For each release, we generate 3
-features, one for the month, year, and both month and year. We have data for
-9,884 movies, and this generates 10,5000 unique features across movies, an
-average of 7 per movie.
+features, one for the month, year, and both month and year.
 
 \begin{align*}
         \{\ \ &\\
@@ -495,10 +492,24 @@ average of 7 per movie.
 \subsection{Budget $\times$ Cast}
 We use the bucketized budget data and join that with the cast features.
 
+\begin{align*}
+        \{\ \ &\\
+        &"budget\_bucket\_2\_Cummings,Jim\_actor": 1,\\
+        &"budget\_bucket\_2\_Klein,Sebastian\_actor": 1\\
+        \}\ \ &
+\end{align*}
+
 \subsection{Actor $\times$ Director}
 We create new features for each combination of actor and director in each cast
 list (where actor includes both actors and actresses, treated distinctly in our
 dataset).
+
+\begin{align*}
+        \{\ \ &\\
+        &"Nolan,Christopher\_Cummings,Jim\_actor": 1,\\
+        &"Nolan,Christopher\_Klein,Sebastian\_actor": 1\\
+        \}\ \ &
+\end{align*}
 
 \subsection*{Preliminary analysis of feature sets}
 In total, there are about 192,000 unique features without combined features for
@@ -529,7 +540,10 @@ Budget (bucketized) & 4.62 & 4.68 \\
 Cast & 0.65 & 2.56 \\
 Genre & 2.26 & 2.29 \\
 Keywords & 1.65 & 3.35 \\
-Release date & 1.69 & 2.26 \\ [1ex] % [1ex] adds vertical space
+Release date & 1.69 & 2.26 \\
+Budget $\times$ Cast & \textbf{x} & \textbf{x} \\
+Actor $\times$ Director & \textbf{x} & \textbf{x} \\
+[1ex] % [1ex] adds vertical space
 \hline %inserts single line
 \end{tabular}
 \label{table:nonlin} % is used to refer this table in the text
@@ -550,7 +564,10 @@ Budget (bucketized) & i & 5,278 (53\%) & 1 \\
 Cast                & 169,973 & 9,883 (99\%) & 72 \\
 Genre               & 25 & 9,885 (99\%) & 2 \\
 Keywords            & 11,701 & 9,774 (98\%) & 75 \\
-Release date        & 10,500 & 9,884 (99\%) & 7 \\ [1ex] % [1ex] adds vertical space
+Release date        & 10,500 & 9,884 (99\%) & 7 \\
+Budget $\times$ Cast & \textbf{x} & \textbf{x} & \textbf{x} \\
+Actor $\times$ Director & \textbf{x} & \textbf{x} & \textbf{x} \\
+[1ex]
 \hline %inserts single line
 \end{tabular}
 \label{table:featuresetsize} % is used to refer this table in the text
@@ -651,6 +668,10 @@ algorithmically reduce our data sizes.
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
+\begin{thebibliography}{1}
+\bibitem{fann}
+Fast Artificial Neural Network Library: \texttt{\url{http://leenissen.dk/fann/wp/}}
+\end{thebibliography}
 
 
 % that's all folks
