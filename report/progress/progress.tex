@@ -340,7 +340,16 @@ ratings on IMDb, based solely on metadata about a movie available prior to it's
 release.
 
 \subsection{Progress summary}
-\blindtext
+We have developed a framework to access and extract features from our dataset,
+and have performed initial training on our extracted features.  We have improved 
+upon our baseline standard error of 1.78, achieving standard errors as low as 0.79.
+In addition, we have started to tune our features and have assembled a framework for
+rapidly iterating on our algorithms so we can tune them.  We have also made efforts 
+to prune unnecessary features.
+
+Going forward, we need to further prune our features, as well as tune the
+hyperparameters of our algorithms.  We also will be feeding the result from K-means, an unsupervised learning algorithm, into our supervised algorithms, and measuring the impact that
+is able to have on our results under a variety of conditions.
 
 \section{Dataset}
 Our dataset is the list of all movies from IMDb that fulfill the following properties
