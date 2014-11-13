@@ -7,7 +7,7 @@ def export_stats_for_file(data_file, csv_filename, features_counter_csv_filename
     data = json.load(open(data_file))
     with open(csv_filename, 'w') as csvfile:
         csv_writer = csv.writer(csvfile)
-        csv_writer.writerow(['rating', 'feature_count', 'features'])
+        csv_writer.writerow(['id', 'rating', 'feature_count'])
         for id, features in data.iteritems():
             csv_writer.writerow([
                 id,
