@@ -181,7 +181,7 @@
 % IEEEtran.cls handling of captions and this will result in nonIEEE style
 % figure/table captions. To prevent this problem, be sure and preload
 % caption.sty with its "caption=false" package option. This is will preserve
-% IEEEtran.cls handing of captions. Version 1.3 (2005/06/28) and later 
+% IEEEtran.cls handing of captions. Version 1.3 (2005/06/28) and later
 % (recommended due to many improvements over 1.2) of subfig.sty supports
 % the caption=false option directly:
 %\usepackage[caption=false,font=footnotesize]{subfig}
@@ -267,7 +267,7 @@
 % http://www.ctan.org/tex-archive/macros/latex/contrib/endfloat/
 %
 % The IEEEtran \ifCLASSOPTIONcaptionsoff conditional can also be used
-% later in the document, say, to conditionally put the References on a 
+% later in the document, say, to conditionally put the References on a
 % page by themselves.
 
 
@@ -323,8 +323,8 @@
 
 
 \begin{abstract}
-The project aims to explore machine learning methods to predict a movie's critical success prior 
-to it's release, i.e. based solely on metadata available about the movie. The code for this project 
+The project aims to explore machine learning methods to predict a movie's critical success prior
+to it's release, i.e. based solely on metadata available about the movie. The code for this project
 can be found at \texttt{\url{https://github.com/jcnnghm/cs221-project}}
 \end{abstract}
 
@@ -370,24 +370,31 @@ rest for development.
 \section{System design}
 Our system is composed of a feature creator system, a snapshot of the IMDb dataset,
 and a variety of learning algorithms that operate on the information exported by
-the feature creator.  The feature creator provides a framework that allows sub-component
-feature extractors to interact with the IMDb dataset, stored in MySQL.  The feature 
-creator calls each extractor in turn for each of the movies we've selected for our
+the feature creator.
+\par The feature creator provides a framework that allows sub-component
+feature extractors to interact with the IMDb dataset, stored in MySQL.  The feature
+creator calls each extractor ($E_i$ in the diagram below) in turn for each of the movies we've selected for our
 dev and test sets, and merges their output features into a sparse feature vector for
-each movie.  The feature vectors are stored in JSON so that they can be easily
+each movie.  An additional combinator step is applied to generate feature
+combinations, e.g. \{movie director $\times$ movie actors\}.
+The creator is highly configurable so that extractors and combinators can easily be selectively enabled or disabled,
+and includes a caching layer to reduce the load on MySQL and speed up processing.
+The feature vectors are stored in JSON so that they can be easily
 post-processed for use with different algorithms. \\
 
-\includegraphics[width=6cm]{charts/system.png}
+\begin{center}
+    \includegraphics[width=6cm]{charts/system.png}
+\end{center}
 
 Each algorithm is responsible for transforming the data to the format that it requires.
 The neural network, for example, converts the sparse vectors from the feature creator
-into a dense representation that can be consumed by FANN, a neural network library.  Each
-component is modular, so the output of some algorithms can potentially be combined with others.
+into a dense representation that can be consumed by FANN \cite{fann}, a neural network library.  Each
+component is modular, so the output of some algorithms can potentially be combined with others ($A_i$ in the diagram above).
 
 \section{Features}
 The feature creator system extracts raw features, and then combines some features with others,
 like actors with directors, to form compound "combination" features.  In total, there are about 192,000
-unique features without combined features for our data set.  With combined features, that number 
+unique features without combined features for our data set.  With combined features, that number
 balloons to over 800,000.
 
 \scalebox{0.55}{\includegraphics{charts/features_without_cross_chart.eps}}
@@ -400,31 +407,25 @@ densely consumes approximately 3.5GB and 14GB respectively, indicating that many
 \scalebox{0.50}{\includegraphics{charts/movies_per_feature.eps}}
  \\ \\
 
-We plan to prune out features that are very specific to reduce the iteration time for our 
-algorithms and the likelihood of over-fitting.  We have also started to consider 
+We plan to prune out features that are very specific to reduce the iteration time for our
+algorithms and the likelihood of over-fitting.  We have also started to consider
 using principal component analysis (PCA) to further reduce our data sizes.
 
-\subsection{Budget}
-\blindtext
+\par Below is a detailed description of each class of features we include.
 
-\textbf{Initial Features (Remove this):}
+\subsection{Budget}
+The Budget feature extractor extracts a weighted feature, within the domain of
+\$1 to \$300M.  Since the data is crowdsourced, there are multiple specified
+budgets for the movie.  We have budget data for 5,278 movies. We only consider
+movies with budgest in US dollars, and we take the largest proposed budget.  We
+also consider using budgets in two ways -- using raw dollar values or bucketing
+the value into \$5M chunks (as indicator variables).
 
 \begin{align*}
-        \{\ \ &\\
-        &"Lasseter,John\_producer": 1,\\
-        &"Luckey,Bud\_actor": 1,\\
-        &"character-name-in-title": 1,\\
-        &"Klein,Sebastian\_actor": 1,\\
-        &"sequel": 1,\\
-        &"genere\_Family": 1,\\
-        &"Cummings,Jim\_actor": 1,\\
-        &"rabbit": 1,\\
-        &"genere\_Comedy": 1,\\
-        &"friendship": 1,\\
-        &"genere\_Animation": 1,\\
-        &"tiger": 1,\\
-        &"Mitchell,Nicole\_writer": 1,\\
-        \}\ \ &
+        \{ \ \ & \\
+        &"budget": 10000000,\\
+        &"budget\_bucket\_2: 1\\
+        \} \ \ &
 \end{align*}
 
 \subsection{Cast}
@@ -432,7 +433,24 @@ The cast feature extractor generates indicator features for each
 cast and crew member associated with a film, for each job they 
 performed.  An individual could potentially appear more than once,
 if they performed different jobs, for example, if they were both
-an actor and director.
+an actor and director.  The cast roles which we include are:
+\begin{itemize}
+	\item Actor
+	\item Actress
+	\item Producer
+	\item Writer
+	\item Cinematographer
+	\item Composer
+	\item Costume designer
+	\item Director
+	\item Editor
+	\item Production designer
+	\item Miscellaneous crew
+\end{itemize}
+This results in 169,973 unique features across 9,883 movies, with an average of
+72 features per movie. As a next step, we can analyze the importance of each
+role: presumably miscellaneous crew will not be predictive of a movie's
+success.
 
 \begin{align*}
         \{ \ \ & \\
@@ -446,7 +464,8 @@ an actor and director.
 
 \subsection{Genre}
 Genre features are indicator features that are activated for each
-genre associated with a movie in the IMDb dataset.
+genre associated with a movie in the IMDb dataset. We have 25 genres across
+9,885 movies, with an average of 2 genres per movie.
 
 \begin{align*}
         \{\ \ &\\
@@ -456,13 +475,11 @@ genre associated with a movie in the IMDb dataset.
         \}\ \ &
 \end{align*}
 
-\subsection{Gross}
-\blindtext
-
 \subsection{Keywords}
 Keyword features are indicator features that are activated for
 each searchable tag that is associated with a movie in the
-IMDb dataset.
+IMDb dataset. We have 11,701 unique keywords across 9,774 movies, with an
+average of 75 features per movie.
 
 \begin{align*}
         \{\ \ &\\
@@ -475,10 +492,22 @@ IMDb dataset.
 \end{align*}
 
 \subsection{Release Date}
-\blindtext
+Release dates are also indicator features that are activated for each release
+in the US across festivals and premieres. For each release, we generate 3
+features, one for the month, year, and both month and year. We have data for
+9,884 movies, and this generates 10,5000 unique features across movies, an
+average of 7 per movie.
 
-\subsection{Votes}
-\blindtext
+\begin{align*}
+        \{\ \ &\\
+        &"release (traverse city film festival) (August)": 1, 
+        &"release (traverse city film festival) (2014)": 1, 
+        &"release (traverse city film festival) (August 2014)": 1, 
+        &"release (limited) (February)": 1, 
+        &"release (limited) (2014)": 1, 
+        &"release (limited) (February 2014)": 1, 
+        \}\ \ &
+\end{align*}
 
 \section{Learning algorithms}
 \blindtext
@@ -494,6 +523,9 @@ iterate more quickly.  In addition, we plan to tune the network topology once we
 to achieve acceptable iteration speeds.
 
 \section{Complete Algorithm}
+\blindtext
+
+\section{Next steps}
 \blindtext
 
 % references section
