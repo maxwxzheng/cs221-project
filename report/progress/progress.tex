@@ -392,26 +392,10 @@ into a dense representation that can be consumed by FANN \cite{fann}, a neural n
 component is modular, so the output of some algorithms can potentially be combined with others ($A_i$ in the diagram above).
 
 \section{Features}
-The feature creator system extracts raw features, and then combines some features with others,
-like actors with directors, to form compound "combination" features.  In total, there are about 192,000
-unique features without combined features for our data set.  With combined features, that number
-balloons to over 800,000.
-
-\scalebox{0.55}{\includegraphics{charts/features_without_cross_chart.eps}}
-
-\scalebox{0.55}{\includegraphics{charts/features_with_cross_chart.eps}}
-
-When represented sparsely, the feature size without combinations is about 53MB, and 82MB with combinations.  The same data represented
-densely consumes approximately 3.5GB and 14GB respectively, indicating that many of the features are not associated with many movies.  Features are associated with an average of 8 movies, skewed heavily to the left. \\
-
-\scalebox{0.50}{\includegraphics{charts/movies_per_feature.eps}}
- \\ \\
-
-We plan to prune out features that are very specific to reduce the iteration time for our
-algorithms and the likelihood of over-fitting.  We have also started to consider
-using principal component analysis (PCA) to further reduce our data sizes.
-
-\par Below is a detailed description of each class of features we include.
+The feature creator system extracts raw features, and then combines some
+features with others, like actors with directors, to form compound
+"combination" features, e.g. \{movie director $\times$ movie actors\}.
+Below is a detailed description of each class of features we include.
 
 \subsection{Budget}
 The Budget feature extractor extracts a weighted feature, within the domain of
@@ -500,14 +484,83 @@ average of 7 per movie.
 
 \begin{align*}
         \{\ \ &\\
-        &"release (traverse city film festival) (August)": 1, 
-        &"release (traverse city film festival) (2014)": 1, 
-        &"release (traverse city film festival) (August 2014)": 1, 
-        &"release (limited) (February)": 1, 
-        &"release (limited) (2014)": 1, 
-        &"release (limited) (February 2014)": 1, 
+        &"release\ (traverse\ film\ festival)\ (August)": 1, \\
+        &"release\ (traverse\ film\ festival)\ (2014)": 1, \\
+        &"release\ (traverse\ film\ festival)\ (August\ 2014)": 1, \\
+        &"release\ (premiere)\ (February)": 1, \\
+        &"release\ (premiere)\ (2014)": 1, \\
+        &"release\ (premiere)\ (February\ 2014)": 1, \\
         \}\ \ &
 \end{align*}
+
+\subsection{Budget $\times$ Cast}
+We use the bucketized budget data and join that with the cast features.
+
+\subsection{Actor $\times$ Director}
+We create new features for each combination of actor and director in each cast
+list (where actor includes both actors and actresses, treated distinctly in our
+dataset).
+
+\subsection*{Preliminary analysis of feature sets}
+In total, there are about 192,000 unique features without combined features for
+our data set.  With combined features, that number balloons to over 800,000.
+
+\scalebox{0.55}{\includegraphics{charts/features_without_cross_chart.eps}}
+
+\scalebox{0.55}{\includegraphics{charts/features_with_cross_chart.eps}}
+
+When represented sparsely, the feature size without combinations is about 53MB, and 82MB with combinations.  The same data represented
+densely consumes approximately 3.5GB and 14GB respectively, indicating that many of the features are not associated with many movies.  Features are associated with an average of 8 movies, skewed heavily to the left. \\
+\\
+\scalebox{0.50}{\includegraphics{charts/movies_per_feature.eps}}
+\\
+An initial investigation into the importance of each feature was performed by
+running our baseline algorithm with each feature set individually. The results
+are in table \ref{table:nonlin}.
+
+\begin{table}[ht]
+\caption{Results using only a single feature} % title of Table
+\centering % used for centering table
+\begin{tabular}{l r r} % columns
+\hline\hline %inserts double horizontal lines
+Feature & Std error on Dev & Std Error on Test \\ [0.5ex] % inserts table 
+\hline % inserts single horizontal line
+Budget (raw) & 5.89 & 5.87 \\ % inserting body of the table
+Budget (bucketized) & 4.62 & 4.68 \\
+Cast & 0.65 & 2.56 \\
+Genre & 2.26 & 2.29 \\
+Keywords & 1.65 & 3.35 \\
+Release date & 1.69 & 2.26 \\ [1ex] % [1ex] adds vertical space
+\hline %inserts single line
+\end{tabular}
+\label{table:nonlin} % is used to refer this table in the text
+\end{table}
+
+Here we note that some feature sets are overfitted to our dev dataset such as
+cast, keywords and release date. These are also our largest feature sets.
+
+\begin{table}[ht]
+\caption{Feature set sizes} % title of Table
+\centering % used for centering table
+\begin{tabular}{l r r r} % columns
+\hline\hline
+Feature             & Num. vars & Num. movies & Feature / movie  \\ [0.5ex] % inserts table 
+\hline
+Budget (raw)        & N/A & 5,278 (53\%) & 1 \\ % inserting body of the table
+Budget (bucketized) & i & 5,278 (53\%) & 1 \\
+Cast                & 169,973 & 9,883 (99\%) & 72 \\
+Genre               & 25 & 9,885 (99\%) & 2 \\
+Keywords            & 11,701 & 9,774 (98\%) & 75 \\
+Release date        & 10,500 & 9,884 (99\%) & 7 \\ [1ex] % [1ex] adds vertical space
+\hline %inserts single line
+\end{tabular}
+\label{table:nonlin} % is used to refer this table in the text
+\end{table}
+
+We plan to prune out features that are very specific to reduce the iteration time for our
+algorithms and the likelihood of over-fitting.  Rather than removing entire
+feature sets, we have started to consider using principal component analysis
+(PCA) to algorithmically reduce our data sizes.
 
 \section{Learning algorithms}
 \blindtext
