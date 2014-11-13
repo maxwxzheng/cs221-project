@@ -541,8 +541,8 @@ Cast & 0.65 & 2.56 \\
 Genre & 2.26 & 2.29 \\
 Keywords & 1.65 & 3.35 \\
 Release date & 1.69 & 2.26 \\
-Budget $\times$ Cast & \textbf{x} & \textbf{x} \\
-Actor $\times$ Director & \textbf{x} & \textbf{x} \\
+Budget $\times$ Cast & 4.54 & 5.65 \\
+Actor $\times$ Director & 2.67 & 5.96 \\
 [1ex] % [1ex] adds vertical space
 \hline %inserts single line
 \end{tabular}
@@ -550,7 +550,8 @@ Actor $\times$ Director & \textbf{x} & \textbf{x} \\
 \end{table}
 
 Here we note that some feature sets are overfitted to our dev dataset such as
-cast, keywords and release date. These are also our largest feature sets (see Table \ref{table:featuresetsize}).
+cast, keywords, release date, budget $\times$ cast and actor $\times$ director.
+These are also our largest feature sets (see Table \ref{table:featuresetsize}).
 
 \begin{table}[ht]
 \caption{Feature set sizes} % title of Table
@@ -560,13 +561,13 @@ cast, keywords and release date. These are also our largest feature sets (see Ta
 Feature             & Num. vars & Num. movies & Feature / movie  \\ [0.5ex] % inserts table 
 \hline
 Budget (raw)        & N/A & 5,278 (53\%) & 1 \\ % inserting body of the table
-Budget (bucketized) & i & 5,278 (53\%) & 1 \\
+Budget (bucketized) & 52 & 5,278 (53\%) & 1 \\
 Cast                & 169,973 & 9,883 (99\%) & 72 \\
 Genre               & 25 & 9,885 (99\%) & 2 \\
 Keywords            & 11,701 & 9,774 (98\%) & 75 \\
 Release date        & 10,500 & 9,884 (99\%) & 7 \\
-Budget $\times$ Cast & \textbf{x} & \textbf{x} & \textbf{x} \\
-Actor $\times$ Director & \textbf{x} & \textbf{x} & \textbf{x} \\
+Budget $\times$ Cast & 394,661 & 5,278 (53\%) & 92 \\
+Actor $\times$ Director & 282,672 & 8,630 (87\%) & 35 \\
 [1ex]
 \hline %inserts single line
 \end{tabular}
