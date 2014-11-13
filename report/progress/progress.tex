@@ -17,7 +17,6 @@
 
 
 \documentclass[journal]{IEEEtran}
-\usepackage{blindtext}
 \usepackage{graphicx, amsmath, amssymb, epstopdf}
 
 % Some very useful LaTeX packages include:
@@ -554,16 +553,38 @@ Keywords            & 11,701 & 9,774 (98\%) & 75 \\
 Release date        & 10,500 & 9,884 (99\%) & 7 \\ [1ex] % [1ex] adds vertical space
 \hline %inserts single line
 \end{tabular}
-\label{table:nonlin} % is used to refer this table in the text
 \end{table}
 
+\subsection*{Feature pruning}
+With combined features, our feature space size is around 723,000. It takes hours to train a Linear Regression Model using scikit-learn on such a large sample space. We did some experiments on feature removal to improve algorithm performance.
+\\
+In our experiment, before training a model, we removed all the features that appear less or equal to n times in the training data. We measured number of features left after removal, time spent to train Linear Regression using scikit-learn and the standard error on test set.
+
+\begin{table}[ht]
+\caption{Effect of pruning on linear regression} % title of Table
+\centering % used for centering table
+\begin{tabular}{l r r r} % columns
+\hline\hline
+n             & Num. features left & Running time & Standard Error  \\ [0.5ex] % inserts table 
+\hline
+0 & 723,000 & $>$ 10 Hours) & N/A \\
+1 & 188,000 & 2.44 Hours & 0.79 \\
+2 & 93,000 & 2.34 Hours & 0.83 \\
+9 & 28,000 & 2.07 Hours & 1.12 \\ [1ex]
+\hline %inserts single line
+\end{tabular}
+\end{table}
+
+As a result, removing the features that appear only once in training set gives huge improvement on performance and still has low standard error on fitting test set. This makes sense because if a feature appears only once in the training set, it's highly likely that the feature won’t appear in the test set, which means the weight for this feature won’t affect the result of fitting test set. Also according to the experiment, increasing the threshold n doesn’t give too much performance gain but worsens the test error.
+\\
 We plan to prune out features that are very specific to reduce the iteration time for our
 algorithms and the likelihood of over-fitting.  Rather than removing entire
 feature sets, we have started to consider using principal component analysis
 (PCA) to algorithmically reduce our data sizes.
 
 \section{Learning algorithms}
-\blindtext
+We tried three machine learning models: Neural Network, Linear Regression, and
+Support Vector Machines (SVM).
 
 \subsection{Neural Network}
 The neural network is implemented using the Fast Artificial Neural Network (FANN)
@@ -575,11 +596,40 @@ The neural network is slow to learn, so we plan to reduce the number of features
 iterate more quickly.  In addition, we plan to tune the network topology once we're able
 to achieve acceptable iteration speeds.
 
+\subsection{Linear Regression}
+We used the implementation of Linear Regression in scikit-learn with default
+parameters. We used feature removal threshold 1. The algorithm took 2.4 hours
+to run and gave standard error 0.79.
+
+\subsection{SVM}
+We used the implementation of SVM in scikit-learn with radial basis function (rbf) kernel and linear kernel. We used feature removal threshold 1. SVM with rbf kernel took 3.3 hours to run and gave standard error 1.09. SVM with linear kernel took 3 minutes to run and gave standard error 1.02.
+
+\subsection*{Preliminary analysis}
+\begin{table}[ht]
+\caption{Model performance} % title of Table
+\centering % used for centering table
+\begin{tabular}{l l l} % columns
+\hline\hline
+Model               & Time to fit & Standard Error  \\ [0.5ex] % inserts table 
+\hline
+Neural network      & $>$ 10 hours  & 1.1 \\
+Linear regression   & 2.4 hours   & 0.79 \\
+SVM                 & 3.3 hours   & 1.09 \\
+Linear support vector classification & 3 minutes & 1.03 \\ [1ex]
+\hline %inserts single line
+\end{tabular}
+\end{table}
+
+The best model we have so far is Linear Regression which gives 0.79 test error.
+Our baseline test error is 1.78 and oracle test error is 0.34. The improvement
+is mostly from feature tuning. For next steps, we plan to focus more on
+improving the performance of Neural Network and tune the network topology to
+see if it can do better than Linear Regression. We also plan to experiment more
+on SVM with different kernels.
+
 \section{Complete Algorithm}
-\blindtext
 
 \section{Next steps}
-\blindtext
 
 % references section
 
