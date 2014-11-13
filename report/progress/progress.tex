@@ -374,9 +374,8 @@ balloons to over 800,000.
 
 \scalebox{0.55}{\includegraphics{charts/features_with_cross_chart.eps}}
 
-When represented sparsely, the feature size without combinations is about 53MB, and 82MB with combinations,
-indicating that many of the features are not associated with many movies.  The same data represented
-densely consumes approximately 3.5GB and 14GB respectively. \\
+When represented sparsely, the feature size without combinations is about 53MB, and 82MB with combinations.  The same data represented
+densely consumes approximately 3.5GB and 14GB respectively, indicating that many of the features are not associated with many movies. \\
 
 \textbf{INSERT HISTOGRAM OF UNIQUE FEATURE TO MOVIE COUNT} \\ \\
 
@@ -387,17 +386,72 @@ using principal component analysis (PCA) to further reduce our data sizes.
 \subsection{Budget}
 \blindtext
 
+\textbf{Initial Features (Remove this):}
+
+\begin{align*}
+        \{\ \ &\\
+        &"Lasseter,John\_producer": 1,\\
+        &"Luckey,Bud\_actor": 1,\\
+        &"character-name-in-title": 1,\\
+        &"Klein,Sebastian\_actor": 1,\\
+        &"sequel": 1,\\
+        &"genere\_Family": 1,\\
+        &"Cummings,Jim\_actor": 1,\\
+        &"rabbit": 1,\\
+        &"genere\_Comedy": 1,\\
+        &"friendship": 1,\\
+        &"genere\_Animation": 1,\\
+        &"tiger": 1,\\
+        &"Mitchell,Nicole\_writer": 1,\\
+        \}\ \ &
+\end{align*}
+
 \subsection{Cast}
-\blindtext
+The cast feature extractor generates indicator features for each
+cast and crew member associated with a film, for each job they 
+performed.  An individual could potentially appear more than once,
+if they performed different jobs, for example, if they were both
+an actor and director.
+
+\begin{align*}
+        \{ \ \ & \\
+        &"Lasseter,John\_producer": 1,\\
+        &"Luckey,Bud\_actor": 1,\\
+        &"Klein,Sebastian\_actor": 1,\\
+        &"Cummings,Jim\_actor": 1,\\
+        &"Mitchell,Nicole\_writer": 1,\\
+        \} \ \ &
+\end{align*}
 
 \subsection{Genre}
-\blindtext
+Genre features are indicator features that are activated for each
+genre associated with a movie in the IMDb dataset.
+
+\begin{align*}
+        \{\ \ &\\
+        &"genre\_Family": 1,\\
+        &"genre\_Comedy": 1,\\
+        &"genre\_Animation": 1,\\
+        \}\ \ &
+\end{align*}
 
 \subsection{Gross}
 \blindtext
 
 \subsection{Keywords}
-\blindtext
+Keyword features are indicator features that are activated for
+each searchable tag that is associated with a movie in the
+IMDb dataset.
+
+\begin{align*}
+        \{\ \ &\\
+        &"character-name-in-title": 1,\\
+        &"sequel": 1,\\
+        &"rabbit": 1,\\
+        &"friendship": 1,\\
+        &"tiger": 1,\\
+        \}\ \ &
+\end{align*}
 
 \subsection{Release Date}
 \blindtext
@@ -409,7 +463,14 @@ using principal component analysis (PCA) to further reduce our data sizes.
 \blindtext
 
 \subsection{Neural Network}
-\blindtext
+The neural network is implemented using the Fast Artificial Neural Network (FANN)
+api.  With two hidden layers, with 20 neurons in the first and 10 in the second, 
+we have achieved a test error rate of 0.012156, when the rating is represented as a
+number between 0 and 1.0, corresponding to an average error of approximately 1.1 out of 10.  
+
+The neural network is slow to learn, so we plan to reduce the number of features so we can
+iterate more quickly.  In addition, we plan to tune the network topology once we're able
+to achieve acceptable iteration speeds.
 
 \section{Complete Algorithm}
 \blindtext
