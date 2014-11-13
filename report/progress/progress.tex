@@ -469,7 +469,8 @@ genre associated with a movie in the IMDb dataset. We have 25 genres across
 \subsection{Keywords}
 Keyword features are indicator features that are activated for
 each searchable tag that is associated with a movie in the
-IMDb dataset.
+IMDb dataset. We have 11,701 unique keywords across 9,774 movies, with an
+average of 75 features per movie.
 
 \begin{align*}
         \{\ \ &\\
@@ -482,7 +483,22 @@ IMDb dataset.
 \end{align*}
 
 \subsection{Release Date}
+Release dates are also indicator features that are activated for each release
+in the US across festivals and premieres. For each release, we generate 3
+features, one for the month, year, and both month and year. We have data for
+9,884 movies, and this generates 10,5000 unique features across movies, an
+average of 7 per movie.
 
+\begin{align*}
+        \{\ \ &\\
+        &"release (traverse city film festival) (August)": 1, 
+        &"release (traverse city film festival) (2014)": 1, 
+        &"release (traverse city film festival) (August 2014)": 1, 
+        &"release (limited) (February)": 1, 
+        &"release (limited) (2014)": 1, 
+        &"release (limited) (February 2014)": 1, 
+        \}\ \ &
+\end{align*}
 
 \section{Learning algorithms}
 \blindtext
