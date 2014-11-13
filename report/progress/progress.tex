@@ -369,7 +369,7 @@ post-processed for use with different algorithms. \\
 Each algorithm is responsible for transforming the data to the format that it requires.
 The neural network, for example, converts the sparse vectors from the feature creator
 into a dense representation that can be consumed by FANN \cite{fann}, a neural network library.  Each
-component is modular, so the output of some algorithms can potentially be combined with others.
+component is modular, so the output of some algorithms can potentially be combined with others ($A_i$ in the diagram above).
 
 \section{Features}
 The feature creator system extracts raw features, and then combines some features with others,
@@ -391,27 +391,21 @@ We plan to prune out features that are very specific to reduce the iteration tim
 algorithms and the likelihood of over-fitting.  We have also started to consider
 using principal component analysis (PCA) to further reduce our data sizes.
 
-\subsection{Budget}
-\blindtext
+\par Below is a detailed description of each class of features we include.
 
-\textbf{Initial Features (Remove this):}
+\subsection{Budget}
+The Budget feature extractor extracts a weighted feature, within the domain of
+\$1 to \$300M.  Since the data is crowdsourced, there are multiple specified
+budgets for the movie.  We have budget data for 5,278 movies. We only consider
+movies with budgest in US dollars, and we take the largest proposed budget.  We
+also consider using budgets in two ways -- using raw dollar values or bucketing
+the value into \$5M chunks (as indicator variables).
 
 \begin{align*}
-        \{\ \ &\\
-        &"Lasseter,John\_producer": 1,\\
-        &"Luckey,Bud\_actor": 1,\\
-        &"character-name-in-title": 1,\\
-        &"Klein,Sebastian\_actor": 1,\\
-        &"sequel": 1,\\
-        &"genere\_Family": 1,\\
-        &"Cummings,Jim\_actor": 1,\\
-        &"rabbit": 1,\\
-        &"genere\_Comedy": 1,\\
-        &"friendship": 1,\\
-        &"genere\_Animation": 1,\\
-        &"tiger": 1,\\
-        &"Mitchell,Nicole\_writer": 1,\\
-        \}\ \ &
+        \{ \ \ & \\
+        &"budget": 10000000,\\
+        &"budget\_bucket\_2: 1\\
+        \} \ \ &
 \end{align*}
 
 \subsection{Cast}
@@ -419,7 +413,24 @@ The cast feature extractor generates indicator features for each
 cast and crew member associated with a film, for each job they 
 performed.  An individual could potentially appear more than once,
 if they performed different jobs, for example, if they were both
-an actor and director.
+an actor and director.  The cast roles which we include are:
+\begin{itemize}
+	\item Actor
+	\item Actress
+	\item Producer
+	\item Writer
+	\item Cinematographer
+	\item Composer
+	\item Costume designer
+	\item Director
+	\item Editor
+	\item Production designer
+	\item Miscellaneous crew
+\end{itemize}
+This results in 169,973 unique features across 9,883 movies, with an average of
+72 features per movie. As a next step, we can analyze the importance of each
+role: presumably miscellaneous crew will not be predictive of a movie's
+success.
 
 \begin{align*}
         \{ \ \ & \\
@@ -433,7 +444,8 @@ an actor and director.
 
 \subsection{Genre}
 Genre features are indicator features that are activated for each
-genre associated with a movie in the IMDb dataset.
+genre associated with a movie in the IMDb dataset. We have 25 genres across
+9,885 movies, with an average of 2 genres per movie.
 
 \begin{align*}
         \{\ \ &\\
@@ -442,9 +454,6 @@ genre associated with a movie in the IMDb dataset.
         &"genre\_Animation": 1,\\
         \}\ \ &
 \end{align*}
-
-\subsection{Gross}
-\blindtext
 
 \subsection{Keywords}
 Keyword features are indicator features that are activated for
@@ -462,10 +471,7 @@ IMDb dataset.
 \end{align*}
 
 \subsection{Release Date}
-\blindtext
 
-\subsection{Votes}
-\blindtext
 
 \section{Learning algorithms}
 \blindtext
