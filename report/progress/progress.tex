@@ -536,7 +536,7 @@ Release date & 1.69 & 2.26 \\ [1ex] % [1ex] adds vertical space
 \end{table}
 
 Here we note that some feature sets are overfitted to our dev dataset such as
-cast, keywords and release date. These are also our largest feature sets.
+cast, keywords and release date. These are also our largest feature sets (see Table \ref{table:featuresetsize}).
 
 \begin{table}[ht]
 \caption{Feature set sizes} % title of Table
@@ -553,19 +553,20 @@ Keywords            & 11,701 & 9,774 (98\%) & 75 \\
 Release date        & 10,500 & 9,884 (99\%) & 7 \\ [1ex] % [1ex] adds vertical space
 \hline %inserts single line
 \end{tabular}
+\label{table:featuresetsize} % is used to refer this table in the text
 \end{table}
 
 \subsection*{Feature pruning}
 With combined features, our feature space size is around 723,000. It takes hours to train a Linear Regression Model using scikit-learn on such a large sample space. We did some experiments on feature removal to improve algorithm performance.
 \\
-In our experiment, before training a model, we removed all the features that appear less or equal to n times in the training data. We measured number of features left after removal, time spent to train Linear Regression using scikit-learn and the standard error on test set.
+In our experiment, before training a model, we removed all the features that appear less or equal to $n$ times in the training data. We measured number of features left after removal, time spent to train Linear Regression using scikit-learn and the standard error on test set.
 
 \begin{table}[ht]
 \caption{Effect of pruning on linear regression} % title of Table
 \centering % used for centering table
 \begin{tabular}{l r r r} % columns
 \hline\hline
-n             & Num. features left & Running time & Standard Error  \\ [0.5ex] % inserts table 
+$n$ & Num. features left & Running time & Standard Error  \\ [0.5ex] % inserts table 
 \hline
 0 & 723,000 & $>$ 10 Hours) & N/A \\
 1 & 188,000 & 2.44 Hours & 0.79 \\
@@ -573,14 +574,17 @@ n             & Num. features left & Running time & Standard Error  \\ [0.5ex] %
 9 & 28,000 & 2.07 Hours & 1.12 \\ [1ex]
 \hline %inserts single line
 \end{tabular}
+\label{table:featurepruning}
 \end{table}
 
-As a result, removing the features that appear only once in training set gives huge improvement on performance and still has low standard error on fitting test set. This makes sense because if a feature appears only once in the training set, it's highly likely that the feature won’t appear in the test set, which means the weight for this feature won’t affect the result of fitting test set. Also according to the experiment, increasing the threshold n doesn’t give too much performance gain but worsens the test error.
-\\
-We plan to prune out features that are very specific to reduce the iteration time for our
-algorithms and the likelihood of over-fitting.  Rather than removing entire
-feature sets, we have started to consider using principal component analysis
-(PCA) to algorithmically reduce our data sizes.
+The results are in Table \ref{table:featurepruning}. Removing the features that
+appear only once in training set gives huge improvement on performance and
+still has low standard error on fitting test set. This makes sense because if a
+feature appears only once in the training set, it's highly likely that the
+feature won't appear in the test set, which means the weight for this feature
+won't affect the result of fitting test set. Also according to the experiment,
+increasing the threshold $n$ doesn't give too much performance gain but worsens
+the test error.
 
 \section{Learning algorithms}
 We tried three machine learning models: Neural Network, Linear Regression, and
@@ -630,6 +634,8 @@ on SVM with different kernels.
 \section{Complete Algorithm}
 
 \section{Next steps}
+We have started to consider using principal component analysis (PCA) to
+algorithmically reduce our data sizes.
 
 % references section
 
