@@ -343,7 +343,18 @@ release.
 \blindtext
 
 \section{Dataset}
-\blindtext
+Our dataset is the list of all movies from IMDb that fulfill the following properties
+\begin{itemize}
+	\item Released in the US
+	\item Generated gross earnings in the US
+	\item Has at least 1,000 user votes to rate the movie
+\end{itemize}
+
+\par After pruning the database of 3 million entries, we are left with 9888
+movies which is a reasonable number for our algorithm sot run on. Limiting the
+data to movies with a reasonable number of user votes also ensures that the
+rating data is not too noisy. We save 20\% of the data for testing, and use the
+rest for development.
 
 \scalebox{0.55}{\includegraphics{ratings.eps}}
 
