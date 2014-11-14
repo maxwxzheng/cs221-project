@@ -9,7 +9,6 @@ import re
 BUDGET_BUCKET = 5000000.0
 
 class BudgetBucketizedFeatureExtractor(Base):
-    __cache__ = False
     def get_budget(self):
         return self.session.query(
             self.models.MovieInfo.movie_id,
@@ -41,6 +40,6 @@ class BudgetBucketizedFeatureExtractor(Base):
                 budget_int = max(budget_int, existing_budget)
             # bucketize budgets
             budget_bucket = int(round(budget_int / BUDGET_BUCKET))
-            features[movie_id]['budget_bucket'] = budget_bucket
+            features[movie_id]['budget_bucket_%d' % budget_bucket] = 1
             logging.debug("Extracted budget: %s %s -> %d -> %d" % (movie_id, budget, budget_int, budget_bucket))
         return features
