@@ -348,7 +348,7 @@ to prune unnecessary features.
 
 Going forward, we need to further prune our features, as well as tune the
 hyperparameters of our algorithms.  We also will be feeding the result from K-means, an unsupervised learning algorithm, into our supervised algorithms, and measuring the impact that
-is able to have on our results under a variety of conditions.
+it is able to have on our results under a variety of conditions.
 
 \section{Dataset}
 Our dataset is the list of all movies from IMDb that fulfill the following properties
@@ -358,15 +358,15 @@ Our dataset is the list of all movies from IMDb that fulfill the following prope
 	\item Has at least 1,000 user votes to rate the movie
 \end{itemize}
 
-\par After pruning the database of 3 million entries, we are left with 9888
-movies which is a reasonable number for our algorithm sot run on. Limiting the
+\par After pruning the database of 3 million entries, we are left with 9,888
+movies which is a reasonable number for our algorithms to run on. Limiting the
 data to movies with a reasonable number of user votes also ensures that the
 rating data is not too noisy. We save 20\% of the data for testing, and use the
 rest for development.
 
 \scalebox{0.55}{\includegraphics{ratings.eps}}
 
-The user ratings have a mean of 6.5 and a median of 6.6 with a standard deviation of 1.05.
+The user ratings in our dataset have a mean of 6.5 and a median of 6.6 with a standard deviation of 1.05.
 
 \section{System design}
 Our system is composed of a feature creator system, a snapshot of the IMDb dataset,
@@ -396,7 +396,8 @@ component is modular, so the output of some algorithms can potentially be combin
 The feature creator system extracts raw features, and then combines some
 features with others, like actors with directors, to form compound
 "combination" features, e.g. \{movie director $\times$ movie actors\}.
-Below is a detailed description of each class of features we include.
+Below is a detailed description of each class of features we include along with
+an example of the features we generate.
 
 \subsection{Individual features}
 \subsubsection{Budget}
@@ -433,9 +434,6 @@ an actor and director.  The cast roles which we include are:
 	\item Production designer
 	\item Miscellaneous crew
 \end{itemize}
-As a next step, we can analyze the importance of each
-role: presumably miscellaneous crew will not be predictive of a movie's
-success.
 
 \begin{align*}
         \{ \ \ & \\
@@ -486,7 +484,9 @@ features, one for the month, year, and both month and year.
 \end{align*}
 
 \subsubsection{Budget $\times$ Cast}
-We use the bucketized budget data and join that with the cast features.
+We use the bucketized budget data and join that with the extracted cast
+features. The idea is that an actor's star power will be amplified by a big
+budget production, or reduced in an indie movie.
 
 \begin{align*}
         \{\ \ &\\
@@ -498,7 +498,8 @@ We use the bucketized budget data and join that with the cast features.
 \subsubsection{Actor $\times$ Director}
 We create new features for each combination of actor and director in each cast
 list (where actor includes both actors and actresses, treated distinctly in our
-dataset).
+dataset). The intuition is that some pairs of actors and directors work well
+together and create better movies together.
 
 \begin{align*}
         \{\ \ &\\
@@ -509,7 +510,7 @@ dataset).
 
 \subsection{Preliminary analysis of feature sets}
 In total, there are about 192,000 unique features without combined features for
-our data set.  With combined features, that number balloons to over 800,000.
+our data set.  With combined features, this number balloons to over 800,000.
 
 \scalebox{0.55}{\includegraphics{charts/features_without_cross_chart.eps}}
 
@@ -520,7 +521,7 @@ densely consumes approximately 3.5GB and 14GB respectively, indicating that many
 \\
 \scalebox{0.50}{\includegraphics{charts/movies_per_feature.eps}}
 \\
-An initial investigation into the importance of each feature was performed by
+\par An initial investigation into the importance of each feature was performed by
 running our baseline algorithm with each feature set individually.\\
 \\
 \begin{tabular}{|l|r r|} % columns
@@ -544,7 +545,7 @@ These are also our largest feature sets.\\
 \\
 \begin{tabular}{|l| r r r|} % columns
 \hline
-Feature             & \shortstack{Num.\\vars} & \shortstack{Num.\\movies} & \shortstack{Feature / \\ movie}  \\ [0.5ex] % inserts table 
+Feature             & \shortstack[c]{Num.\\vars} & \shortstack[c]{Num.\\movies} & \shortstack[c]{Feature / \\ movie}  \\ [0.5ex] % inserts table 
 \hline
 Budget (raw)        & N/A & 5,278 (53\%) & 1 \\ % inserting body of the table
 Budget (bucketized) & 52 & 5,278 (53\%) & 1 \\
@@ -558,15 +559,14 @@ Actor $\times$ Director & 282,672 & 8,630 (87\%) & 35 \\
 \end{tabular}
 
 \subsection{Feature pruning}
-With combined features, our feature space size is around 723,000. It takes hours to train a Linear Regression Model using scikit-learn on such a large sample space. We did some experiments on feature removal to improve algorithm performance.
-\\
-In our experiment, before training a model, we removed all the features that appear less or equal to $n$ times in the training data. We measured number of features left after removal, time spent to train Linear Regression using scikit-learn and the standard error on test set.\\
+With combined features, our feature space size is around 800,000. It takes hours to train a Linear Regression Model using scikit-learn \cite{scikit} on such a large sample space. We did some experiments on feature removal to improve algorithm performance.
+\par In our experiments, we removed all the features that appear less or equal to $n$ times in the training data before training a model. We measured the number of features left after removal, time spent to train Linear Regression using scikit-learn and the standard error on test set.\\
 \\
 \begin{tabular}{|l| r r r|} % columns
 \hline
 $n$ & Num. features left & Running time & Standard Error  \\ [0.5ex] % inserts table 
 \hline
-0 & 723,000 & $>$ 10 Hours) & N/A \\
+0 & 723,000 & $>$ 10 Hours & N/A \\
 1 & 188,000 & 2.44 Hours & 0.79 \\
 2 & 93,000 & 2.34 Hours & 0.83 \\
 9 & 28,000 & 2.07 Hours & 1.12 \\ [1ex]
@@ -575,11 +575,12 @@ $n$ & Num. features left & Running time & Standard Error  \\ [0.5ex] % inserts t
 \smallskip
 \\
 \par Removing the features that
-appear only once in training set gives huge improvement on performance and
-still has low standard error on fitting test set. This makes sense because if a
+appear only once in the training set gives huge improvements on performance
+while maintaining low standard errors on fitting the test set. This makes sense
+because if a
 feature appears only once in the training set, it's highly likely that the
-feature won't appear in the test set, which means the weight for this feature
-won't affect the result of fitting test set. Also according to the experiment,
+feature won't appear in the test set, which means that the weight for this feature
+won't affect the result of fitting the test set. Also, according to the experiment,
 increasing the threshold $n$ doesn't give too much performance gain but worsens
 the test error.
 
@@ -590,8 +591,8 @@ Support Vector Machines (SVM).
 \subsection{Implemented algorithms}
 \subsubsection{Neural Network}
 The neural network is implemented using the Fast Artificial Neural Network (FANN)
-api.  With two hidden layers, with 20 neurons in the first and 10 in the second, 
-we have achieved a test error rate of 0.012156, when the rating is represented as a
+API.  With two hidden layers, with 20 neurons in the first and 10 in the second, 
+we have achieved a test error rate of 0.012, when the rating is represented as a
 number between 0 and 1.0, corresponding to an average error of approximately 1.1 out of 10.  
 
 The neural network is slow to learn, so we plan to reduce the number of features so we can
@@ -604,7 +605,7 @@ parameters. We used feature removal threshold 1. The algorithm took 2.4 hours
 to run and gave standard error 0.79.
 
 \subsubsection{SVM}
-We used the implementation of SVM in scikit-learn with radial basis function (rbf) kernel and linear kernel. We used feature removal threshold 1. SVM with rbf kernel took 3.3 hours to run and gave standard error 1.09. SVM with linear kernel took 3 minutes to run and gave standard error 1.02.
+We used the implementation of SVM in scikit-learn with radial basis function (rbf) kernel and linear kernel. We used the feature removal threshold of 1. SVM with rbf kernel took 3.3 hours to run and gave standard error of 1.09. SVM with linear kernel took 3 minutes to run and gave standard error of 1.02.
 
 \subsection{Preliminary analysis}
 \smallskip
@@ -621,11 +622,8 @@ SVM                 & 3.3 hours   & 1.09 \\
 \smallskip
 \\
 \par The best model we have so far is Linear Regression which gives 0.79 test error.
-Our baseline test error is 1.78 and oracle test error is 0.34. The improvement
-is mostly from feature tuning. For next steps, we plan to focus more on
-improving the performance of Neural Network and tune the network topology to
-see if it can do better than Linear Regression. We also plan to experiment more
-on SVM with different kernels.
+Compare this to our baseline test error of 1.78 and oracle test error of 0.34.
+We believe the improvement is mostly from feature tuning.
 
 \section{Next steps}
 To get better models and improve the prediction accuracy, we plan to further improve both our feature set and the algorithms.
@@ -656,6 +654,8 @@ We plan to focus on improving the Neural Network model. We will first try to dec
 \begin{thebibliography}{1}
 \bibitem{fann}
 Fast Artificial Neural Network Library: \texttt{\url{http://leenissen.dk/fann/wp/}}
+\bibitem{scikit}
+Scikit-learn: \texttt{\url{http://scikit-learn.org/stable/}}
 \end{thebibliography}
 
 
