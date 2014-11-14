@@ -627,11 +627,17 @@ improving the performance of Neural Network and tune the network topology to
 see if it can do better than Linear Regression. We also plan to experiment more
 on SVM with different kernels.
 
-\section{Complete Algorithm}
-
 \section{Next steps}
-We have started to consider using principal component analysis (PCA) to
-algorithmically reduce our data sizes.
+To get better models and improve the prediction accuracy, we plan to further improve both our feature set and the algorithms.
+
+\subsection{Combined Features}
+We already have some combined features such as Budget $\times$ Cast and Actor $\times$ Director. We plan to experiment with more combined features, e.g. Actor $\times$ Actor, Director $\times$ Genre, etc.
+
+\subsection{Derived Features}
+We plan to experiment on a few derived features. For example, we think the experience of the director, actor, or screenwriter might have considerable impact on the rating of a movie. However, none of the features we have right now capture the experience of the film crew. We plan to do some analysis on the training data. On each movie, we will count the number of movies the cast member has made before making this movie and add the counts as new weighted feature. We will also derive more features from them, e.g. average experience of crew member, average experience of actors, etc.
+
+\subsection{Model \& Algorithm}
+We plan to focus on improving the Neural Network model. We will first try to decrease the runtime of training the Neural Network model to an acceptable range so we can quickly iterate. To achieve this, we will try a few techniques such as feature removal or PCA. After that, we will work on improving the Neural Network model to achieve better prediction accuracy by tuning the topology of the Neural Network. We also plan to apply k-means to categorize the training data, generating a set of clusters for the dataset, then treating each cluster as an indicator feature to feed into later algorithms.
 
 % references section
 
