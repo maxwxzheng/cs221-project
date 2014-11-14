@@ -398,7 +398,8 @@ features with others, like actors with directors, to form compound
 "combination" features, e.g. \{movie director $\times$ movie actors\}.
 Below is a detailed description of each class of features we include.
 
-\subsection{Budget}
+\subsection{Individual features}
+\subsubsection{Budget}
 The Budget feature extractor extracts a weighted feature, within the domain of
 \$1 to \$300M.  Since the data is crowdsourced, there are multiple specified
 budgets for the movie.  We only consider movies with budgest in US dollars, and
@@ -413,7 +414,7 @@ indicator variables).
         \} \ \ &
 \end{align*}
 
-\subsection{Cast}
+\subsubsection{Cast}
 The cast feature extractor generates indicator features for each
 cast and crew member associated with a film, for each job they 
 performed.  An individual could potentially appear more than once,
@@ -439,14 +440,12 @@ success.
 \begin{align*}
         \{ \ \ & \\
         &"Lasseter,John\_producer": 1,\\
-        &"Luckey,Bud\_actor": 1,\\
-        &"Klein,Sebastian\_actor": 1,\\
         &"Cummings,Jim\_actor": 1,\\
         &"Mitchell,Nicole\_writer": 1,\\
         \} \ \ &
 \end{align*}
 
-\subsection{Genre}
+\subsubsection{Genre}
 Genre features are indicator features that are activated for each
 genre associated with a movie in the IMDb dataset.
 
@@ -454,11 +453,10 @@ genre associated with a movie in the IMDb dataset.
         \{\ \ &\\
         &"genre\_Family": 1,\\
         &"genre\_Comedy": 1,\\
-        &"genre\_Animation": 1,\\
         \}\ \ &
 \end{align*}
 
-\subsection{Keywords}
+\subsubsection{Keywords}
 Keyword features are indicator features that are activated for
 each searchable tag that is associated with a movie in the
 IMDb dataset.
@@ -467,13 +465,11 @@ IMDb dataset.
         \{\ \ &\\
         &"character-name-in-title": 1,\\
         &"sequel": 1,\\
-        &"rabbit": 1,\\
         &"friendship": 1,\\
-        &"tiger": 1,\\
         \}\ \ &
 \end{align*}
 
-\subsection{Release Date}
+\subsubsection{Release Date}
 Release dates are also indicator features that are activated for each release
 in the US across festivals and premieres. For each release, we generate 3
 features, one for the month, year, and both month and year.
@@ -489,7 +485,7 @@ features, one for the month, year, and both month and year.
         \}\ \ &
 \end{align*}
 
-\subsection{Budget $\times$ Cast}
+\subsubsection{Budget $\times$ Cast}
 We use the bucketized budget data and join that with the cast features.
 
 \begin{align*}
@@ -499,7 +495,7 @@ We use the bucketized budget data and join that with the cast features.
         \}\ \ &
 \end{align*}
 
-\subsection{Actor $\times$ Director}
+\subsubsection{Actor $\times$ Director}
 We create new features for each combination of actor and director in each cast
 list (where actor includes both actors and actresses, treated distinctly in our
 dataset).
@@ -511,7 +507,7 @@ dataset).
         \}\ \ &
 \end{align*}
 
-\subsection*{Preliminary analysis of feature sets}
+\subsection{Preliminary analysis of feature sets}
 In total, there are about 192,000 unique features without combined features for
 our data set.  With combined features, that number balloons to over 800,000.
 
@@ -525,14 +521,10 @@ densely consumes approximately 3.5GB and 14GB respectively, indicating that many
 \scalebox{0.50}{\includegraphics{charts/movies_per_feature.eps}}
 \\
 An initial investigation into the importance of each feature was performed by
-running our baseline algorithm with each feature set individually. The results
-are in table \ref{table:nonlin}.
-
-\begin{table}[ht]
-\caption{Results using only a single feature} % title of Table
-\centering % used for centering table
-\begin{tabular}{l r r} % columns
-\hline\hline %inserts double horizontal lines
+running our baseline algorithm with each feature set individually.\\
+\\
+\begin{tabular}{|l|r r|} % columns
+\hline
 Feature & Std error on Dev & Std Error on Test \\ [0.5ex] % inserts table 
 \hline % inserts single horizontal line
 Budget (raw) & 5.89 & 5.87 \\ % inserting body of the table
@@ -543,22 +535,16 @@ Keywords & 1.65 & 3.35 \\
 Release date & 1.69 & 2.26 \\
 Budget $\times$ Cast & 4.54 & 5.65 \\
 Actor $\times$ Director & 2.67 & 5.96 \\
-[1ex] % [1ex] adds vertical space
-\hline %inserts single line
+\hline
 \end{tabular}
-\label{table:nonlin} % is used to refer this table in the text
-\end{table}
-
-Here we note that some feature sets are overfitted to our dev dataset such as
+\smallskip
+\par Here we note that some feature sets are overfitted to our dev dataset such as
 cast, keywords, release date, budget $\times$ cast and actor $\times$ director.
-These are also our largest feature sets (see Table \ref{table:featuresetsize}).
-
-\begin{table}[ht]
-\caption{Feature set sizes} % title of Table
-\centering % used for centering table
-\begin{tabular}{l r r r} % columns
-\hline\hline
-Feature             & Num. vars & Num. movies & Feature / movie  \\ [0.5ex] % inserts table 
+These are also our largest feature sets.\\
+\\
+\begin{tabular}{|l| r r r|} % columns
+\hline
+Feature             & \shortstack{Num.\\vars} & \shortstack{Num.\\movies} & \shortstack{Feature / \\ movie}  \\ [0.5ex] % inserts table 
 \hline
 Budget (raw)        & N/A & 5,278 (53\%) & 1 \\ % inserting body of the table
 Budget (bucketized) & 52 & 5,278 (53\%) & 1 \\
@@ -568,22 +554,16 @@ Keywords            & 11,701 & 9,774 (98\%) & 75 \\
 Release date        & 10,500 & 9,884 (99\%) & 7 \\
 Budget $\times$ Cast & 394,661 & 5,278 (53\%) & 92 \\
 Actor $\times$ Director & 282,672 & 8,630 (87\%) & 35 \\
-[1ex]
 \hline %inserts single line
 \end{tabular}
-\label{table:featuresetsize} % is used to refer this table in the text
-\end{table}
 
-\subsection*{Feature pruning}
+\subsection{Feature pruning}
 With combined features, our feature space size is around 723,000. It takes hours to train a Linear Regression Model using scikit-learn on such a large sample space. We did some experiments on feature removal to improve algorithm performance.
 \\
-In our experiment, before training a model, we removed all the features that appear less or equal to $n$ times in the training data. We measured number of features left after removal, time spent to train Linear Regression using scikit-learn and the standard error on test set.
-
-\begin{table}[ht]
-\caption{Effect of pruning on linear regression} % title of Table
-\centering % used for centering table
-\begin{tabular}{l r r r} % columns
-\hline\hline
+In our experiment, before training a model, we removed all the features that appear less or equal to $n$ times in the training data. We measured number of features left after removal, time spent to train Linear Regression using scikit-learn and the standard error on test set.\\
+\\
+\begin{tabular}{|l| r r r|} % columns
+\hline
 $n$ & Num. features left & Running time & Standard Error  \\ [0.5ex] % inserts table 
 \hline
 0 & 723,000 & $>$ 10 Hours) & N/A \\
@@ -592,8 +572,6 @@ $n$ & Num. features left & Running time & Standard Error  \\ [0.5ex] % inserts t
 9 & 28,000 & 2.07 Hours & 1.12 \\ [1ex]
 \hline %inserts single line
 \end{tabular}
-\label{table:featurepruning}
-\end{table}
 
 The results are in Table \ref{table:featurepruning}. Removing the features that
 appear only once in training set gives huge improvement on performance and
@@ -608,7 +586,8 @@ the test error.
 We tried three machine learning models: Neural Network, Linear Regression, and
 Support Vector Machines (SVM).
 
-\subsection{Neural Network}
+\subsection{Implemented algorithms}
+\subsubsection{Neural Network}
 The neural network is implemented using the Fast Artificial Neural Network (FANN)
 api.  With two hidden layers, with 20 neurons in the first and 10 in the second, 
 we have achieved a test error rate of 0.012156, when the rating is represented as a
@@ -618,31 +597,29 @@ The neural network is slow to learn, so we plan to reduce the number of features
 iterate more quickly.  In addition, we plan to tune the network topology once we're able
 to achieve acceptable iteration speeds.
 
-\subsection{Linear Regression}
+\subsubsection{Linear Regression}
 We used the implementation of Linear Regression in scikit-learn with default
 parameters. We used feature removal threshold 1. The algorithm took 2.4 hours
 to run and gave standard error 0.79.
 
-\subsection{SVM}
+\subsubsection{SVM}
 We used the implementation of SVM in scikit-learn with radial basis function (rbf) kernel and linear kernel. We used feature removal threshold 1. SVM with rbf kernel took 3.3 hours to run and gave standard error 1.09. SVM with linear kernel took 3 minutes to run and gave standard error 1.02.
 
-\subsection*{Preliminary analysis}
-\begin{table}[ht]
-\caption{Model performance} % title of Table
-\centering % used for centering table
-\begin{tabular}{l l l} % columns
-\hline\hline
+\subsection{Preliminary analysis}
+\smallskip
+\begin{tabular}{|l |l l|} % columns
+\hline
 Model               & Time to fit & Standard Error  \\ [0.5ex] % inserts table 
 \hline
 Neural network      & $>$ 10 hours  & 1.1 \\
 Linear regression   & 2.4 hours   & 0.79 \\
 SVM                 & 3.3 hours   & 1.09 \\
-Linear support vector classification & 3 minutes & 1.03 \\ [1ex]
+\shortstack[l]{Linear support\\vector classification} & 3 minutes & 1.03 \\ [1ex]
 \hline %inserts single line
 \end{tabular}
-\end{table}
-
-The best model we have so far is Linear Regression which gives 0.79 test error.
+\smallskip
+\\
+\par The best model we have so far is Linear Regression which gives 0.79 test error.
 Our baseline test error is 1.78 and oracle test error is 0.34. The improvement
 is mostly from feature tuning. For next steps, we plan to focus more on
 improving the performance of Neural Network and tune the network topology to
