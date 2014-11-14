@@ -378,7 +378,7 @@ creator calls each extractor ($E_i$ in the diagram below) in turn for each of th
 dev and test sets, and merges their output features into a sparse feature vector for
 each movie.  An additional combinator step is applied to generate feature
 combinations, e.g. \{movie director $\times$ movie actors\}.
-The creator is highly configurable so that extractors and combinators can easily be selectively enabled or disabled,
+\par The creator is highly configurable so that extractors and combinators can easily be selectively enabled or disabled,
 and includes a caching layer to reduce the load on MySQL and speed up processing.
 The feature vectors are stored in JSON so that they can be easily
 post-processed for use with different algorithms. \\
@@ -572,8 +572,9 @@ $n$ & Num. features left & Running time & Standard Error  \\ [0.5ex] % inserts t
 9 & 28,000 & 2.07 Hours & 1.12 \\ [1ex]
 \hline %inserts single line
 \end{tabular}
-
-The results are in Table \ref{table:featurepruning}. Removing the features that
+\smallskip
+\\
+\par Removing the features that
 appear only once in training set gives huge improvement on performance and
 still has low standard error on fitting test set. This makes sense because if a
 feature appears only once in the training set, it's highly likely that the
