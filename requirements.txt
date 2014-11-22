@@ -6,3 +6,4 @@ docopt
 pybrain
 numpy
 scipy
+scikit-learn
