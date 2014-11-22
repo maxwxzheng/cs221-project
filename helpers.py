@@ -57,14 +57,25 @@ class DataTransformer(object):
         self.rounded_rating = rounded_rating
 
         # Maps feature name to it's index in feature vector
-        self.feature_name_to_index = {}
+        feature_name_to_count = {}
         for movie_id in training_movie_ids:
             if str(movie_id) not in data:
                 continue
             movie_data = data[str(movie_id)]
             for feature_name in movie_data['features']:
-                if feature_name not in self.feature_name_to_index:
-                    self.feature_name_to_index[feature_name] = len(self.feature_name_to_index)
+                if feature_name not in feature_name_to_count:
+                    feature_name_to_count[feature_name] = 1
+                else:
+                    feature_name_to_count[feature_name] += 1
+
+        # Drop features
+        self.feature_name_to_index = {}
+        logging.info("Number of features before drop: %s" % len(feature_name_to_count))
+        drop_feature_threshold = 0.001
+        for feature_name, feature_count in feature_name_to_count.items():
+            if feature_count >= drop_feature_threshold * len(training_movie_ids):
+                self.feature_name_to_index[feature_name] = len(self.feature_name_to_index)
+        logging.info("Number of features after drop: %s" % len(self.feature_name_to_index))
 
         # num_movies * num_features matrix.
         self.feature_matrix = []
@@ -79,6 +90,7 @@ class DataTransformer(object):
                 self.labels.append(movie_data['rating_rounded'])
             else:
                 self.labels.append(movie_data['rating'])
+
         logging.info("Initializing DataTransformer done!")
 
     def get_training_data(self):
