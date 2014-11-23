@@ -14,7 +14,7 @@ class ScikitKmeansRunner(object):
         self.load_data()
 
         for count in [10, 100, 500, 1000]:
-            self.run_model(cluster.KMeans(n_clusters=count, verbose=5, n_jobs=-1, precompute_distances=False, copy_x=False), "k_means_%s" % count)
+            self.run_model(cluster.KMeans(n_clusters=count, verbose=5, n_jobs=-1, precompute_distances=True, copy_x=False), "k_means_%s" % count)
 
     def load_data(self):
         self.data = json.load(open('data/features.json'))
