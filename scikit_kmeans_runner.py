@@ -3,6 +3,7 @@ import os
 import helpers
 from sklearn import cluster
 from cache import Cache
+import itertools
 import logging
 import sys
 import time
@@ -13,7 +14,7 @@ class ScikitKmeansRunner(object):
         self.load_data()
 
         for count in [10, 100, 500, 1000]:
-            self.run_model(cluster.KMeans(n_clusters=count, verbose=5, n_jobs=-1), "k_means_%s" % count)
+            self.run_model(cluster.KMeans(n_clusters=count, verbose=5, n_jobs=-1, precompute_distances=False, copy_x=False), "k_means_%s" % count)
 
     def load_data(self):
         self.data = json.load(open('data/features.json'))
@@ -42,10 +43,34 @@ class ScikitKmeansRunner(object):
 
         helpers.standard_eror(predictions, self.predict_labels)
 
+        self.save_kmeans_features(model, model_name)
+
         # Write result to file
         f = open('data/result/%s' % model_name, 'w')
         f.write(pickle.dumps(model))
         f.close()
+
+    def save_kmeans_features(self, model, model_name):
+        logging.info("Preparing to save kmeans features...")
+        logging.info("Reloading features.")
+        features = json.load(open('data/features.json'))
+        logging.info("Generating clusters for data")
+        training_predictions = model.predict(self.training_feature_matrix)
+        test_predictions = model.predict(self.predict_feature_matrix)
+        logging.info("Finished Generating Clusters for data")
+
+        movie_id_clusters = [[self.dev_movie_ids, training_predictions], [self.test_movie_ids, test_predictions]]
+
+        for movie_ids, clusters in movie_id_clusters:
+            if len(movie_ids) != len(clusters):
+                raise ValueError('Movie ids don\'t match clusters')
+            for movie_id, cluster in itertools.izip(movie_ids, clusters):
+                features[str(movie_id)]['features']['cluster_%s' % cluster] = 1
+
+        logging.info("Saving cluster features")
+
+        Cache.save_file(os.path.join('data', 'features_%s.json' % model_name), features)
+
 
 if __name__ == '__main__':
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)

@@ -1,6 +1,10 @@
 import logging
 import math
 
+
+MINIMUM_FEATURE_COUNT = 3
+
+
 def encode(text):
     return text.decode('iso-8859-1').encode('utf8')
 
@@ -73,7 +77,7 @@ class DataTransformer(object):
         logging.info("Number of features before drop: %s" % len(feature_name_to_count))
         drop_feature_threshold = 0.001
         for feature_name, feature_count in feature_name_to_count.items():
-            if feature_count >= drop_feature_threshold * len(training_movie_ids):
+            if feature_count >= MINIMUM_FEATURE_COUNT:
                 self.feature_name_to_index[feature_name] = len(self.feature_name_to_index)
         logging.info("Number of features after drop: %s" % len(self.feature_name_to_index))
 
