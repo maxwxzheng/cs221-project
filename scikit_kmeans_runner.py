@@ -14,7 +14,7 @@ class ScikitKmeansRunner(object):
         self.load_data()
 
         for count in [10, 100, 500, 1000]:
-            self.run_model(cluster.KMeans(n_clusters=count, verbose=5, n_jobs=-1, precompute_distances=True, copy_x=False), "k_means_%s" % count)
+            self.run_model(cluster.MiniBatchKMeans(n_clusters=count, verbose=5), "k_means_%s" % count)
 
     def load_data(self):
         self.data = json.load(open('data/features.json'))
@@ -45,10 +45,11 @@ class ScikitKmeansRunner(object):
 
         self.save_kmeans_features(model, model_name)
 
+        # The model when there are 1000 clusters is too large to save
         # Write result to file
-        f = open('data/result/%s' % model_name, 'w')
-        f.write(pickle.dumps(model))
-        f.close()
+        # f = open('data/result/%s' % model_name, 'w')
+        # f.write(pickle.dumps(model))
+        # f.close()
 
     def save_kmeans_features(self, model, model_name):
         logging.info("Preparing to save kmeans features...")
