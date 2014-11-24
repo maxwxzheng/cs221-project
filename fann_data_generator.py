@@ -1,3 +1,15 @@
+"""
+Fann Data Generator
+
+Usage:
+  fann_data_generator.py [options]
+
+Options:
+  -h --help             Show this screen.
+  --feature-file=FILE   Json file containing features [default: data/features.json]
+"""
+
+from docopt import docopt
 import json
 import contextlib
 import os
@@ -13,51 +25,39 @@ class FannDataGenerator(object):
     MINIMAL_SIZE = 100
 
     def run(self):
+        self.arguments = docopt(__doc__)
         self.load_data()
+        self.save_fann_files()
 
     def load_data(self):
-        logging.info("Starting data loads.")
-        self.data = json.load(open('data/features.json'))
+        logging.info("Starting data loading")
+        self.data = json.load(open(self.arguments['--feature-file']))
+        helpers.normalize_features(self.data)
 
-        self.dev_movie_ids = set(json.load(open('data/dev.json')))
-        self.test_movie_ids = set(json.load(open('data/test.json')))
+        self.dev_movie_ids = json.load(open('data/dev.json'))
+        self.test_movie_ids = json.load(open('data/test.json'))
 
-        # Transforms the data so they can be used by pybrain.
-        logging.info("Loading feature keys...")
-        feature_keys = set()
-        for movie_id, features in self.data.iteritems():
-            feature_keys.update(features['features'].keys())
+        # Transforms the data so they can be used by scikit-learn library.
+        self.data_transformer = helpers.DataTransformer(self.data, self.dev_movie_ids)  # , run_pca=False, sparse_matrix=False)
+        self.training_feature_matrix, self.training_labels = self.data_transformer.get_training_data()
 
-        self.feature_keys = list(feature_keys)
-        logging.info("Feature keys loaded.")
+        self.predict_feature_matrix, self.predict_labels, self.predict_ids = \
+            self.data_transformer.transform_movies_data(self.data, self.test_movie_ids)
+        logging.info("Data loading complete")
 
-        logging.info("Vectorizing features...")
-        i = 0
-        with contextlib.nested(
-            open(os.path.join("data", "minimal.data"), "w"),
-            open(os.path.join("data", "test.data"), "w"),
-            open(os.path.join("data", "dev.data"), "w")
-        ) as (minimal_file, test_file, dev_file):
-            minimal_file.write("%s %s %s\n" % (self.MINIMAL_SIZE, len(self.feature_keys), 1))
-            test_file.write("%s %s %s\n" % (len(self.test_movie_ids), len(self.feature_keys), 1))
-            dev_file.write("%s %s %s\n" % (len(self.dev_movie_ids), len(self.feature_keys), 1))
-
-            for movie_id, features in self.data.iteritems():
-                i += 1
-                if int(movie_id) in self.dev_movie_ids:
-                    file = dev_file
-                else:
-                    file = test_file
-
-                full_feature = [str(features['features'].get(feature_key, 0)) for feature_key in self.feature_keys]
-                full_feature_str = ' '.join(full_feature)
-
-                if i <= self.MINIMAL_SIZE:
-                    self.write_features_and_rating(minimal_file, full_feature_str, features['rating'])
-
-                self.write_features_and_rating(file, full_feature_str, features['rating'])
-
-        logging.info("Features vectorized.")
+    def save_fann_files(self):
+        files = (
+            (os.path.join("data", "minimal.data"), self.training_feature_matrix[0:100], self.training_labels[0:100]),
+            (os.path.join("data", "dev.data"), self.training_feature_matrix, self.training_labels),
+            (os.path.join("data", "test.data"), self.predict_feature_matrix, self.predict_labels)
+        )
+        for file_name, matrix, labels in files:
+            logging.info("Writing file %s" % file_name)
+            with open(file_name, 'w') as file:
+                file.write("%s %s %s\n" % (len(matrix), len(matrix[0]), 1))
+                for row, rating in itertools.izip(matrix, labels):
+                    feature_str = ' '.join(str(i) for i in row)
+                    self.write_features_and_rating(file, feature_str, rating)
 
     def write_features_and_rating(self, file, feature_str, rating):
         file.write(feature_str)
