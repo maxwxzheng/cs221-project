@@ -5,14 +5,14 @@ learning_rate = 0.7
 num_neurons_hidden = 100
 
 desired_error = 0.0001
-max_iterations = 100
+max_iterations = 1000
 iterations_between_reports = 1
 
 ann = libfann.neural_net()
 
 
 train_data = libfann.training_data()
-train_data.read_train_from_file("data/dev-kmeans-10-full.data")
+train_data.read_train_from_file("data/dev-kmeans-10-pca.data")
 # train_data.scale_input_train_data(0, 1)
 
 # ann.create_from_file("minimal.net")
@@ -26,7 +26,7 @@ ann.train_on_data(train_data, max_iterations, iterations_between_reports, desire
 ann.save("minimal.net")
 
 test_data = libfann.training_data()
-test_data.read_train_from_file("data/test-kmeans-10-full.data")
+test_data.read_train_from_file("data/test-kmeans-10-pca.data")
 # test_data.scale_input_train_data(0, 1)
 
 print "\nTrain error: %f, Test error: %f\n\n" %(ann.test_data(train_data),ann.test_data(test_data))
