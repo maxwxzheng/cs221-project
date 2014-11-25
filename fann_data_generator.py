@@ -7,6 +7,7 @@ Usage:
 Options:
   -h --help             Show this screen.
   --feature-file=FILE   Json file containing features [default: data/features.json]
+  --postfix=POSTFIX     Postfix
 """
 
 from docopt import docopt
@@ -38,7 +39,7 @@ class FannDataGenerator(object):
         self.test_movie_ids = json.load(open('data/test.json'))
 
         # Transforms the data so they can be used by scikit-learn library.
-        self.data_transformer = helpers.DataTransformer(self.data, self.dev_movie_ids)  # , run_pca=False, sparse_matrix=False)
+        self.data_transformer = helpers.DataTransformer(self.data, self.dev_movie_ids, run_pca=True, sparse_matrix=True)
         self.training_feature_matrix, self.training_labels = self.data_transformer.get_training_data()
 
         self.predict_feature_matrix, self.predict_labels, self.predict_ids = \
@@ -46,10 +47,15 @@ class FannDataGenerator(object):
         logging.info("Data loading complete")
 
     def save_fann_files(self):
+        if self.arguments['--postfix']:
+            postfix = self.arguments['--postfix']
+        else:
+            postfix = ''
+
         files = (
-            (os.path.join("data", "minimal.data"), self.training_feature_matrix[0:100], self.training_labels[0:100]),
-            (os.path.join("data", "dev.data"), self.training_feature_matrix, self.training_labels),
-            (os.path.join("data", "test.data"), self.predict_feature_matrix, self.predict_labels)
+            (os.path.join("data", "minimal%s.data" % postfix), self.training_feature_matrix[0:100], self.training_labels[0:100]),
+            (os.path.join("data", "dev%s.data" % postfix), self.training_feature_matrix, self.training_labels),
+            (os.path.join("data", "test%s.data" % postfix), self.predict_feature_matrix, self.predict_labels)
         )
         for file_name, matrix, labels in files:
             logging.info("Writing file %s" % file_name)

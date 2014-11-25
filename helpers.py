@@ -103,7 +103,7 @@ class DataTransformer(object):
             self.feature_matrix = sparse.csr_matrix(self.feature_matrix)
         if self.run_pca:
             logging.info("Fitting pca...")
-            self.pca = decomposition.RandomizedPCA(copy=False, n_components=7000)
+            self.pca = decomposition.RandomizedPCA(copy=False, n_components=5000)
             self.feature_matrix = self.pca.fit_transform(self.feature_matrix)
             logging.info("PCA fit")
 
