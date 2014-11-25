@@ -9,6 +9,7 @@ Options:
   -h --help             Show this screen.
   --version             Version number.
   --verbose             Print output to STDOUT
+  --skip_combinators    Turn off feature combinators
 
 Feature Groups:
   --baseline            Extract only baseline features.
