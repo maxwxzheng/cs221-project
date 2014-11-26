@@ -1,3 +1,15 @@
+"""
+Scikit Kmeans Runner
+
+Usage:
+  scikit_kmeans_runner.py [options]
+
+Options:
+  -h --help             Show this screen.
+  --clusters=CLUSTERS   Number of clusters - if this isn't specified multiple clusters are created.
+"""
+
+from docopt import docopt
 import json
 import os
 import helpers
@@ -11,9 +23,12 @@ import pickle
 
 class ScikitKmeansRunner(object):
     def run(self):
+        self.arguments = docopt(__doc__)
         self.load_data()
 
-        for count in [10, 100, 500, 1000]:
+        counts = [int(self.arguments['--clusters'])] if self.arguments['--clusters'] else [10, 100, 500, 1000]
+
+        for count in counts:
             self.run_model(cluster.KMeans(n_clusters=count, verbose=5, n_jobs=-1, precompute_distances=True, copy_x=False), "k_means_%s" % count)
 
     def load_data(self):
@@ -24,7 +39,7 @@ class ScikitKmeansRunner(object):
         self.test_movie_ids = json.load(open('data/test.json'))
 
         # Transforms the data so they can be used by scikit-learn library.
-        self.data_transformer = helpers.DataTransformer(self.data, self.dev_movie_ids)
+        self.data_transformer = helpers.DataTransformer(self.data, self.dev_movie_ids, run_pca=False, sparse_matrix=True)
         self.training_feature_matrix, self.training_labels = self.data_transformer.get_training_data()
 
         self.predict_feature_matrix, self.predict_labels, self.predict_ids = \
