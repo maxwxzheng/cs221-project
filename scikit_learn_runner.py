@@ -27,8 +27,9 @@ class ScikitLearnRunner(object):
         self.load_data()
 
         self.run_model(linear_model.LinearRegression(), "linear_regression")
-        self.run_model(linear_model.SGDRegressor(), "sgd_regressor")
-        self.run_model(linear_model.LogisticRegression(), "logistic_regressor")
+        self.run_model(linear_model.LogisticRegression(C=0.8), "logistic_regressor")
+        self.run_model(linear_model.SGDRegressor(shuffle=True, n_iter=100000), "sgd_regressor")
+
         #self.run_model(svm.SVR(), "svm")
 
     def load_data(self):
