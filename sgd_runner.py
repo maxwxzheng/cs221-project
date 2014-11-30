@@ -1,3 +1,16 @@
+"""
+SGD Runner
+
+Usage:
+  sgd_runner.py [options]
+
+Options:
+  -h --help             Show this screen.
+  --feature-file=FILE   Json file containing features [default: data/features.json]
+"""
+
+from docopt import docopt
+from helpers import MINIMUM_FEATURE_COUNT
 import json
 import math
 import os
@@ -33,7 +46,9 @@ def dotProduct(d1, d2):
 
 class SGDRunner(object):
     def run(self):
+        self.arguments = docopt(__doc__)
         self.load_data()
+
         print "Computing weights"
         weights = self.run_sgd(self.data, self.dev_movie_ids, compute_gradient_linear_regression)
         print "Computing errors"
@@ -41,7 +56,7 @@ class SGDRunner(object):
         self.save_weights(weights)
 
     def load_data(self):
-        self.data = json.load(open('data/features.json'))
+        self.data = json.load(open(self.arguments['--feature-file']))
         self.dev_movie_ids = json.load(open('data/dev.json'))
         self.test_movie_ids = json.load(open('data/test.json'))
 
@@ -52,7 +67,7 @@ class SGDRunner(object):
     def run_sgd(self, data, movie_ids, compute_gradient):
         self.normalize_features(data)
 
-        num_iters = 100
+        num_iters = 1000
         eta = 0.001
         weights = {}
         for iteration in range(num_iters):
@@ -87,6 +102,21 @@ class SGDRunner(object):
                     movie_info['features'][feature_name] = 1
                 else:
                     movie_info['features'][feature_name] = (feature_value - max_min[feature_name][1]) / float(max_min[feature_name][0] - max_min[feature_name][1])
+
+        # Drop features
+        print "Pruning Features..."
+        feature_name_to_count = {}
+        for movie_id in self.dev_movie_ids:
+            movie_data = data[str(movie_id)]
+            for feature_name in movie_data['features']:
+                feature_name_to_count[feature_name] = feature_name_to_count.get(feature_name, 0) + 1
+
+        final_features = set()
+        for movie_id in data:
+            movie_data = data[str(movie_id)]
+            movie_data['features'] = dict((k, v) for k, v in movie_data['features'].iteritems() if feature_name_to_count.get(k, 0) >= MINIMUM_FEATURE_COUNT)
+            final_features.update(movie_data['features'].keys())
+        print "Finished pruning features - %s to %s" % (len(feature_name_to_count), len(final_features))
 
     def standard_error(self, data, movie_ids, weights):
         count = 0

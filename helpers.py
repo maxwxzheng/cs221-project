@@ -1,5 +1,11 @@
 import logging
 import math
+from scipy import sparse
+from sklearn import decomposition
+
+
+MINIMUM_FEATURE_COUNT = 3
+
 
 def encode(text):
     return text.decode('iso-8859-1').encode('utf8')
@@ -52,9 +58,11 @@ class DataTransformer(object):
         data_of_movies_to_predict = (some data)
         scikit-learn.model.predict(transformer.transform_movies_data(data, predict_movie_ids))
     """
-    def __init__(self, data, training_movie_ids, rounded_rating=False):
+    def __init__(self, data, training_movie_ids, rounded_rating=False, run_pca=True, sparse_matrix=True):
         logging.info("Initializing DataTransformer...")
         self.rounded_rating = rounded_rating
+        self.run_pca = run_pca
+        self.sparse_matrix = sparse_matrix
 
         # Maps feature name to it's index in feature vector
         feature_name_to_count = {}
@@ -80,7 +88,7 @@ class DataTransformer(object):
         self.feature_name_to_index = {}
         logging.info("Number of features before drop: %s" % len(feature_name_to_count))
         for feature_name, feature_count in feature_name_to_count.items():
-            if feature_count >= 2:
+            if feature_count >= MINIMUM_FEATURE_COUNT:
                 self.feature_name_to_index[feature_name] = len(self.feature_name_to_index)
         logging.info("Number of features after drop: %s" % len(self.feature_name_to_index))
 
@@ -97,6 +105,14 @@ class DataTransformer(object):
                 self.labels.append(movie_data['rating_rounded'])
             else:
                 self.labels.append(movie_data['rating'])
+
+        if self.sparse_matrix:
+            self.feature_matrix = sparse.csr_matrix(self.feature_matrix)
+        if self.run_pca:
+            logging.info("Fitting pca...")
+            self.pca = decomposition.RandomizedPCA(copy=False, n_components=5000)
+            self.feature_matrix = self.pca.fit_transform(self.feature_matrix)
+            logging.info("PCA fit")
 
         logging.info("Initializing DataTransformer done!")
 
@@ -128,6 +144,11 @@ class DataTransformer(object):
             else:
                 labels.append(movie_data['rating'])
             ids.append(movie_id)
+
+        if self.sparse_matrix:
+            matrix = sparse.csr_matrix(matrix)
+        if self.run_pca:
+            matrix = self.pca.transform(matrix)
         logging.info("Transforming movie data done!")
         return matrix, labels, ids
 

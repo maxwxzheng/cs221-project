@@ -7,11 +7,10 @@ class BudgetCastCombinator(Base):
         budget = 0
         cast = []
         for k, v in features.iteritems():
-            if k == 'budget_bucket': budget = v
+            if k.find('budget_bucket_') == 0:
+                budget = k
             if k.find('cast_') == 0:
                 cast.append(k)
-        if budget == 0:
-            logging.debug('Skipping %s, no budget' % movie_id)
-            return
-        for c in cast:
-            features['b_%d_%s' % (budget, c)] = 1
+        if budget != 0:
+            for c in cast:
+                features['%s_%s' % (budget, c)] = 1
