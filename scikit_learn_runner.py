@@ -3,6 +3,8 @@ import os
 import helpers
 from sklearn import linear_model
 from sklearn import svm
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.svm import LinearSVC
 from cache import Cache
 import logging
 import sys
@@ -11,10 +13,15 @@ import pickle
 
 class ScikitLearnRunner(object):
     def run(self):
-        self.load_data()
+        #self.load_data()
 
-        self.run_model(linear_model.LinearRegression(), "linear_regression")
+        #self.run_model(linear_model.LinearRegression(), "linear_regression")
+        #self.run_model(linear_model.SGDRegressor(), "linear_regression_sgd")
         #self.run_model(svm.SVR(), "svm")
+        print svm.SVC().kernel
+        #self.run_model(svm.LinearSVC(), "svm_linearSVC")
+        #self.run_model(svm.SGDRegressor(), "svm_sgd")
+        #self.run_model(OneVsRestClassifier(LinearSVC()), "multiclass_classifier")
 
     def load_data(self):
         self.data = json.load(open('data/features.json'))

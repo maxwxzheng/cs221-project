@@ -58,6 +58,7 @@ class DataTransformer(object):
 
         # Maps feature name to it's index in feature vector
         feature_name_to_count = {}
+        cast_to_count = {}
         for movie_id in training_movie_ids:
             if str(movie_id) not in data:
                 continue
@@ -68,12 +69,18 @@ class DataTransformer(object):
                 else:
                     feature_name_to_count[feature_name] += 1
 
+                # Keeps track of cast apperance.
+                if len(feature_name) >= 5 and feature_name[0:5] == "cast_":
+                    if feature_name not in cast_to_count:
+                        cast_to_count[feature_name] = 1
+                    else:
+                        cast_to_count[feature_name] += 1
+
         # Drop features
         self.feature_name_to_index = {}
         logging.info("Number of features before drop: %s" % len(feature_name_to_count))
-        drop_feature_threshold = 0.001
         for feature_name, feature_count in feature_name_to_count.items():
-            if feature_count >= drop_feature_threshold * len(training_movie_ids):
+            if feature_count >= 2:
                 self.feature_name_to_index[feature_name] = len(self.feature_name_to_index)
         logging.info("Number of features after drop: %s" % len(self.feature_name_to_index))
 
