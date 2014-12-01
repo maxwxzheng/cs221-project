@@ -9,10 +9,12 @@ Options:
   -h --help             Show this screen.
   --version             Version number.
   --verbose             Print output to STDOUT
+  --skip_combinators    Turn off feature combinators
 
 Feature Groups:
   --baseline            Extract only baseline features.
   --oracle              Extract only oracle features.
+  --skip_combinators    Skip the combination features.
 """
 
 import inspect
@@ -111,7 +113,7 @@ class FeatureCreator(object):
                     if not obj.oracle:
                         self.feature_extractors.append(obj)
         self.feature_extractor_combinators = []
-        if '--skip_combinators' not in self.arguments:
+        if not self.arguments['--skip_combinators']:
             for name, obj in inspect.getmembers(feature_extractors.combinators):
                 if inspect.isclass(obj):
                     self.feature_extractor_combinators.append(obj())
