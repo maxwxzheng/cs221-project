@@ -32,6 +32,8 @@ class ScikitLearnRunner(object):
         self.run_model(linear_model.LogisticRegression(C=0.8), "logistic_regressor")
         self.run_model(linear_model.SGDRegressor(shuffle=True, n_iter=100000), "sgd_regressor")
 
+        #self.run_model(svm.SVR(), "svm")
+
     def load_data(self):
         self.data = json.load(open(self.arguments['--feature-file']))
         helpers.normalize_features(self.data)
