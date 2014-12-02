@@ -8,4 +8,4 @@ from ratings import RatingsFeatureExtractor
 from release_date import ReleaseDateFeatureExtractor
 from votes import VotesFeatureExtractor
 from rt_ratings import RtRatingsFeatureExtractor
-from normalized_budget import NormalizedBudgetFeatureExtractor
+from standardized_budget import StandardizedBudgetFeatureExtractor
