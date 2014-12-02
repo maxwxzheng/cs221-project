@@ -1,4 +1,5 @@
 import logging
+import numpy
 
 from feature_extractor_base import Base
 from models.info_type import BUDGET_TYPE_ID, RELEASE_DATES_ID
@@ -9,11 +10,10 @@ from sqlalchemy.sql.expression import cast
 
 """
 Extracts max budget (USD) and min release year per movie.
-Averages budgets per year, and outputs a single new feature per movie:
-    normalized_budget = budget - average(budget that year)
+Computes data for combinators/compute_standardized_budget.py
 """
 
-class NormalizedBudgetFeatureExtractor(Base):
+class StandardizedBudgetFeatureExtractor(Base):
 
     def get_data(self):
         logging.debug("These queries will take a few mins to run.")
@@ -62,26 +62,23 @@ class NormalizedBudgetFeatureExtractor(Base):
         )
 
     def extract(self):
-        average_budgets = {}
-        counts = {}
+        budgets = {}
         data = list(self.get_data())
         for movie_id, budget, release_year in data:
-            average_budgets[release_year] = average_budgets.get(release_year, 0) + budget
-            counts[release_year] = counts.get(release_year, 0) + 1
-        for year, sum in average_budgets.iteritems():
-            average_budgets[year] = int(sum / counts[year])
-        logging.info('budget averages: ',  average_budgets)
-        print average_budgets
+            if budgets.get(release_year) is None:
+                budgets[release_year] = []
+            budgets[release_year].append(int(budget)),
 
         features = {}
         for movie_id, budget, release_year in data:
             if features.get(movie_id) is None:
                 features[movie_id] = {}
-            normalized_budget = int(budget) - average_budgets[release_year]
-            features[movie_id]['normalized_budget'] = normalized_budget
+            features[movie_id]['standardized_budget'] = {
+                'budget': int(budget),
+                'year_data': budgets[release_year],
+            }
             logging.debug(
-                'Extracted normalized budget: %s %s %s -> %s' %
-                (movie_id, str(budget), str(average_budgets[release_year]),
-                str(normalized_budget))
+                'Extracted standardized budget: %s (%s, %s)' %
+                (movie_id, str(budget), str(release_year))
             )
         return features
