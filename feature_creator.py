@@ -31,6 +31,7 @@ from movie_filter import MovieFilter
 import models
 import feature_extractors
 import feature_extractors.combinators
+import feature_extractors.util_feature_extractors
 from models.info_type import RATING_ID
 from helpers import encode
 
@@ -73,7 +74,8 @@ class FeatureCreator(object):
                 'rating': float(rating),
                 'rating_rounded': int(round(float(rating))),
                 'title': title,
-                'features': {}
+                'features': {},
+                'util_features': {}
             }
 
     def extract_features(self):
@@ -83,6 +85,9 @@ class FeatureCreator(object):
         for combinator in self.feature_extractor_combinators:
             for movie_id, feature in self.features.iteritems():
                 combinator.combine(movie_id, feature['features'])
+        for util_feature_extractor in self.util_feature_extractors:
+            for movie_id, features in util_feature_extractor(self.movie_ids).extract_cached().iteritems():
+                self.features[int(movie_id)]['util_features'].update(features)
 
     def save_features(self):
         Cache.save_file(self.FEATURES_PATH, self.features)
@@ -117,6 +122,10 @@ class FeatureCreator(object):
             for name, obj in inspect.getmembers(feature_extractors.combinators):
                 if inspect.isclass(obj):
                     self.feature_extractor_combinators.append(obj())
+        self.util_feature_extractors = []
+        for name, obj in inspect.getmembers(feature_extractors.util_feature_extractors):
+            if inspect.isclass(obj):
+                self.util_feature_extractors.append(obj)
 
 
 if __name__ == '__main__':
