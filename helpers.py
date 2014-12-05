@@ -6,7 +6,7 @@ import re
 import collections
 
 
-MINIMUM_FEATURE_COUNT = 3
+MINIMUM_FEATURE_COUNT = 2
 CAST_RE = 'cast_(\d+)_(\d+)'
 
 def encode(text):
@@ -106,7 +106,7 @@ class DataTransformer(object):
         self.run_pca = run_pca
         self.sparse_matrix = sparse_matrix
 
-        #compute_cast_experience(data)
+        compute_cast_experience(data)
 
         # Maps feature name to it's index in feature vector
         feature_name_to_count = {}
