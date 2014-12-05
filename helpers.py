@@ -2,10 +2,12 @@ import logging
 import math
 from scipy import sparse
 from sklearn import decomposition
+import re
+import collections
 
 
 MINIMUM_FEATURE_COUNT = 3
-
+CAST_RE = 'cast_(\d+)_(\d+)'
 
 def encode(text):
     return text.decode('iso-8859-1').encode('utf8')
@@ -47,6 +49,46 @@ def standard_eror(predictions, labels):
     logging.info("Standard error: %s" % err)
     return err
 
+def get_yyyymm(util_features):
+    if "release_year" not in util_features:
+        return None
+    return util_features["release_year"] * 100 + util_features["release_month"]
+
+def compute_cast_experience(data):
+    cast_movies_releases = {}
+    # Collect release yyyymm of all movies of each cast.
+    for movie_id, movie_data in data.items():
+        release_date = get_yyyymm(movie_data["util_features"])
+        if release_date == None:
+            continue
+        for feature in movie_data["features"]:
+            if re.match(CAST_RE, feature) != None:
+                if feature not in cast_movies_releases:
+                    cast_movies_releases[feature] = []
+                cast_movies_releases[feature].append(release_date)
+    # Sort the lists for each cast.
+    for cast, release_dates in cast_movies_releases.items():
+        release_dates.sort()
+    # For each movie, compute average experience for each cast role.
+    for movie_id, movie_data in data.items():
+        release_date = get_yyyymm(movie_data["util_features"])
+        if release_date == None:
+            continue
+        experience_per_role = {}
+        for feature in movie_data["features"]:
+            m = re.match(CAST_RE, feature)
+            if m != None:
+                release_dates = cast_movies_releases[feature]
+                for i in range(len(release_dates)):
+                    if release_dates[i] >= release_date:
+                        key = "role_" + str(m.group(2)) + "_experience"
+                        if key not in experience_per_role:
+                            experience_per_role[key] = []
+                        experience_per_role[key].append(i)
+                        break
+        for key, val in experience_per_role.items():
+            movie_data["features"][key] = sum(val) / float(len(val))
+
 class DataTransformer(object):
     """
     DataTransformer transforms movie data we get from feature extractors to data we can use to pass into models in scikit-learn.
@@ -63,6 +105,8 @@ class DataTransformer(object):
         self.rounded_rating = rounded_rating
         self.run_pca = run_pca
         self.sparse_matrix = sparse_matrix
+
+        #compute_cast_experience(data)
 
         # Maps feature name to it's index in feature vector
         feature_name_to_count = {}
