@@ -338,6 +338,29 @@ project, we try to predict the critical success of a movie, as shown by user
 ratings on IMDb, based solely on metadata about a movie available prior to it's
 release.
 
+
+\section{Related Work}
+Henning-Thurau, Houston and Walsh \cite{marketing} performed an empirical study
+to distinguish direct and indirect relationships among different determinants
+of movie success and found that star and director power does not guarantee
+success. However, cultural familiarity (e.g. sequels to a successful movie),
+release dates (e.g. during the summer), budget and awards were a huge predictor
+of success. Relatedly, Deniz and Hasbrouck \cite{greenlight} performed
+statistical analysis on the top 150 grossing movies of 2010 and found that
+genre, MPAA rating, budget, star power, adaptation from another medium, sequels
+and remakes are significant predictors
+of box office revenue. 
+\\
+\par There are also other student projects that attempted to predict user
+ratings. One was done for the Machine Learning class (CS229) \cite{hitorflop},
+where they used Naive Bayes and Support Vector Machines to predict IMDb user
+ratings and profitability. Their system performed moderately well on their test
+data. Another similar project \cite{cooper} used regression (Support Vector
+Regression, Boosted Decision Trees, Gradient Boosting Regression and Random
+Forest Regression) over a different dataset (The Sagel Index of the top and
+worst 1000 films), predicting audience ratings on Rotten Tomatoes. Their system
+resulted in error rates of roughly 10\%.
+
 \subsection{Progress summary}
 We have developed a framework to access and extract features from our dataset,
 and have performed initial training on our extracted features.  We have improved 
@@ -654,10 +677,35 @@ We plan to focus on improving the Neural Network model. We will first try to dec
 \begin{thebibliography}{1}
 \bibitem{fann}
 Fast Artificial Neural Network Library: \texttt{\url{http://leenissen.dk/fann/wp/}}
+
 \bibitem{scikit}
 Scikit-learn: \texttt{\url{http://scikit-learn.org/stable/}}
-\end{thebibliography}
 
+\bibitem{marketing}
+H-T Thorsten, H. Mark, W. Gianfranco, \emph{Determinants of Motion Picture Box
+Office and Profitability: An Interrelationship Approach} \hskip 1em plus 0.5em
+minus 0.4em\relax Review of Managerial Science, 2006.
+
+\bibitem{greenlight}
+B.~Deniz and R.~B.~Hasbrouck, \emph{WHEN TO GREENLIGHT:
+Examining the Pre-release Factors that Determine Future Box Office Success of a Movie in the United States}
+\hskip 1em plus 0.5em minus 0.4em\relax International Journal of Economics and Management Sciences, 2012.
+
+\bibitem{hitorflop}
+D.~Cocuzzo and S.~Wu, \emph{Hit or Flop: Box Office Prediction for Feature
+Films}\hskip 1em plus
+  0.5em minus 0.4em\relax Stanford CS 229 project, Dec 2013.
+
+\bibitem{cooper}
+S.~Mevawala and S.~Phadke, \emph{BoxOffice: Machine Learning Methods for Predicting Audience Film Ratings}\hskip 1em plus
+  0.5em minus 0.4em\relax The Cooper Union for the Advancement of Science and Art.
+  
+\bibitem{imdb_api}
+\texttt{\url{http://www.imdb.com/interfaces}}
+
+\bibitem{rt_api}
+\texttt{\url{http://developer.rottentomatoes.com}}
+\end{thebibliography}
 
 % that's all folks
 \end{document}
