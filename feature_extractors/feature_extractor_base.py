@@ -3,6 +3,7 @@ from collections import defaultdict
 
 from cache import Cache
 from session import session
+from models.info_type import RATING_ID
 import models
 
 
