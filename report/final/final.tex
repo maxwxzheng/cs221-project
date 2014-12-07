@@ -88,6 +88,34 @@ rest for development.
 
 The user ratings in our dataset have a mean of 6.5 and a median of 6.6 with a standard deviation of 1.05.
 
+\section{Evaluation Metric}
+We used the standard deviation of the predicted values from the actual values, calculated as
+
+$$ \sqrt{\frac{\sum_{i=1}^n(\text{Predicted}_i-\text{Actual}_i)^2}{n}} $$
+
+\subsection{Baseline}
+For our baseline, we included the following features:
+\begin{itemize}
+	\item Complete cast members, which includes actors, directors, producers, etc.
+	\item Movie genre
+	\item Keywords describing the movie
+\end{itemize}
+
+This results in a sample standard deviation of 0.06 on the training data, and
+1.78 on the test data.
+
+\subsection{Oracle}
+For our oracle, we added additional features which are movie data available
+\emph{after} a movie is released. These are:
+\begin{itemize}
+	\item Gross earnings
+	\item IMDb user ratings
+	\item Number of votes for the ratings
+\end{itemize}
+
+This results in a sample standard deviation of of 0.03 on the training data, and 0.34 on the test data.
+\\
+\par We had initially added critic and audience ratings from Rotten Tomatoes, but it produced unexpected results, namely critic scores were negative weights and negative audience ratings had the opposite effect (movies rated \emph{Spilled} had larger weights than \emph{Upright})
 
 \section{System design}
 Our system is composed of a feature creator system, a snapshot of the IMDb dataset,
