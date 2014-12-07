@@ -361,18 +361,6 @@ Forest Regression) over a different dataset (The Sagel Index of the top and
 worst 1000 films), predicting audience ratings on Rotten Tomatoes. Their system
 resulted in error rates of roughly 10\%.
 
-\subsection{Progress summary}
-We have developed a framework to access and extract features from our dataset,
-and have performed initial training on our extracted features.  We have improved 
-upon our baseline standard error of 1.78, achieving standard errors as low as 0.79.
-In addition, we have started to tune our features and have assembled a framework for
-rapidly iterating on our algorithms so we can tune them.  We have also made efforts 
-to prune unnecessary features.
-
-Going forward, we need to further prune our features, as well as tune the
-hyperparameters of our algorithms.  We also will be feeding the result from K-means, an unsupervised learning algorithm, into our supervised algorithms, and measuring the impact that
-it is able to have on our results under a variety of conditions.
-
 \section{Dataset}
 Our dataset is the list of all movies from IMDb that fulfill the following properties
 \begin{itemize}
@@ -531,7 +519,7 @@ together and create better movies together.
         \}\ \ &
 \end{align*}
 
-\subsection{Preliminary analysis of feature sets}
+\subsection{Analysis of feature sets}
 In total, there are about 192,000 unique features without combined features for
 our data set.  With combined features, this number balloons to over 800,000.
 
@@ -630,7 +618,7 @@ to run and gave standard error 0.79.
 \subsubsection{SVM}
 We used the implementation of SVM in scikit-learn with radial basis function (rbf) kernel and linear kernel. We used the feature removal threshold of 1. SVM with rbf kernel took 3.3 hours to run and gave standard error of 1.09. SVM with linear kernel took 3 minutes to run and gave standard error of 1.02.
 
-\subsection{Preliminary analysis}
+\subsection{Analysis}
 \smallskip
 \begin{tabular}{|l |l l|} % columns
 \hline
