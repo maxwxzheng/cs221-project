@@ -314,19 +314,23 @@ the test error.
 
 \subsection{K-means}
 
+\section{Algorithms}
 
-\section{Linear Regression}
+\subsection{Linear Regression}
 We used the implementation of Linear Regression in scikit-learn with default
 parameters. We used feature removal threshold 1. The algorithm took 2.4 hours
 to run and gave standard error 0.79.
 
-\subsection{Regularization}
+\subsubsection{Regularization}
 
+\subsection{Logistic Regression}
 
-\section{SVM}
+\textit{Maybe we should just skip this, we didn't cover it in class and it didn't perform better than anything else.}
+
+\subsection{SVM}
 We used the implementation of SVM in scikit-learn with radial basis function (rbf) kernel and linear kernel. We used the feature removal threshold of 1. SVM with rbf kernel took 3.3 hours to run and gave standard error of 1.09. SVM with linear kernel took 3 minutes to run and gave standard error of 1.02.
 
-\section{Neural Network}
+\subsection{Neural Network}
 The neural network is implemented using the Fast Artificial Neural Network (FANN)
 API.  With two hidden layers, with 20 neurons in the first and 10 in the second, 
 we have achieved a test error rate of 0.012, when the rating is represented as a
@@ -354,17 +358,7 @@ SVM (linear kernel) & 3 minutes   & 1.02 \\ [1ex]
 Compare this to our baseline test error of 1.78 and oracle test error of 0.34.
 We believe the improvement is mostly from feature tuning.
 
-\section{Future work}
-To get better models and improve the prediction accuracy, we plan to further improve both our feature set and the algorithms.
-
-\subsection{Combined Features}
-We already have some combined features such as Budget $\times$ Cast and Actor $\times$ Director. We plan to experiment with more combined features, e.g. Actor $\times$ Actor, Director $\times$ Genre, etc.
-
-\subsection{Derived Features}
-We plan to experiment on a few derived features. For example, we think the experience of the director, actor, or screenwriter might have considerable impact on the rating of a movie. However, none of the features we have right now capture the experience of the film crew. We plan to do some analysis on the training data. On each movie, we will count the number of movies the cast member has made before making this movie and add the counts as new weighted feature. We will also derive more features from them, e.g. average experience of crew member, average experience of actors, etc.
-
-\subsection{Model \& Algorithm}
-We plan to focus on improving the Neural Network model. We will first try to decrease the runtime of training the Neural Network model to an acceptable range so we can quickly iterate. To achieve this, we will try a few techniques such as feature removal or PCA. After that, we will work on improving the Neural Network model to achieve better prediction accuracy by tuning the topology of the Neural Network. We also plan to apply k-means to categorize the training data, generating a set of clusters for the dataset, then treating each cluster as an indicator feature to feed into later algorithms.
+\section{Analysis}
 
 \section{Acknowledgements}
 
