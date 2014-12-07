@@ -31,8 +31,8 @@ class ScikitLearnRunner(object):
         self.load_data()
 
         self.run_model(linear_model.LinearRegression(), "linear_regression")
-        #self.run_model(linear_model.LogisticRegression(C=0.8), "logistic_regressor")
-        #self.run_model(linear_model.SGDRegressor(shuffle=True, n_iter=100000), "sgd_regressor")
+        self.run_model(linear_model.LogisticRegression(), "logistic_regressor")
+        self.run_model(linear_model.SGDRegressor(shuffle=True, n_iter=100000), "sgd_regressor")
 
         iters = [10, 100, 1000, 10000, 100000]
         alpha = [0, 0.0001, 0.001, 0.01, 0.05, 0.1, 0.25, 0.5]
