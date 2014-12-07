@@ -301,7 +301,7 @@ running our baseline algorithm with each feature set individually.\\
 \\
 \begin{tabular}{|l|r r|} % columns
 \hline
-Feature & Std error on Dev & Std Error on Test \\ [0.5ex] % inserts table 
+Feature & Dev error & Test error \\ [0.5ex] % inserts table 
 \hline % inserts single horizontal line
 Budget (raw) & 5.89 & 5.87 \\ % inserting body of the table
 Budget (bucketized) & 4.62 & 4.68 \\
@@ -369,6 +369,15 @@ increasing the threshold $n$ doesn't give too much performance gain but worsens
 the test error.
 
 \subsection{Principal Component Analysis}
+We ran Principal Component Analysis, PCA, on our features to further analyze
+the data, and to reduce our feature size for the neural network. With PCA, we
+are able to reduce our feature set to 5,000.  It shows that the first feature
+represents about 1.5\% of the variance.  Further, the first 5,000 features
+capture 91\% of the variance from the data.
+\\
+\scalebox{0.575}{\includegraphics{charts/pca.eps}}
+\\
+\scalebox{0.55}{\includegraphics{charts/pca_variance.eps}}
 
 \subsection{K-means}
 
