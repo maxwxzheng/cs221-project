@@ -41,11 +41,13 @@ cost millions of dollars to create.  However, not all movies are successes.
 With such high risk and large amounts of money involved, it would be useful to
 be able to predict the success of a movie before it is released. In this
 project, we try to predict the critical success of a movie, as shown by user
-ratings on IMDb, based solely on metadata about a movie available prior to it's
+ratings on IMDb \cite{imdb}, based solely on metadata about a movie available prior to it's
 release.
 
-\subsection{Task definition}
-[should we add a more precise definition of our task here explicitly?]
+\begin{itemize}
+    \item Input: IMDb metadata for a movie related to it's creation and release
+    \item Output: Predicted user rating of a movie, on a scale of 0-10
+\end{itemize}
 
 
 \section{Related Work}
@@ -89,7 +91,7 @@ rest for development.
 The user ratings in our dataset have a mean of 6.5 and a median of 6.6 with a standard deviation of 1.05.
 
 \section{Evaluation Metric}
-We used the standard deviation of the predicted values from the actual values, calculated as
+We used the standard deviation of the predicted user rating from the actual values on IMDb, calculated as
 
 $$ \sqrt{\frac{\sum_{i=1}^n(\text{Predicted}_i-\text{Actual}_i)^2}{n}} $$
 
@@ -405,6 +407,9 @@ We believe the improvement is mostly from feature tuning.
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
 \begin{thebibliography}{1}
+\bibitem{imdb}
+Internet Movie Database: \texttt{\url{http://imdb.com}}
+
 \bibitem{fann}
 Fast Artificial Neural Network Library: \texttt{\url{http://leenissen.dk/fann/wp/}}
 
