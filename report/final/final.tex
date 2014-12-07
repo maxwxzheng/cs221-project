@@ -127,7 +127,7 @@ the feature creator.
 feature extractors to interact with the IMDb dataset, stored in MySQL.  The feature
 creator calls each extractor ($E_i$ in the diagram below) in turn for each of the movies we've selected for our
 dev and test sets, and merges their output features into a sparse feature vector for
-each movie.  An additional combinator step is applied to generate feature
+each movie.  An additional combinator step ($C_i$ in the diagram) is applied to generate feature
 combinations, e.g. \{movie director $\times$ movie actors\}.
 \par The creator is highly configurable so that extractors and combinators can easily be selectively enabled or disabled,
 and includes a caching layer to reduce the load on MySQL and speed up processing.
@@ -141,7 +141,7 @@ post-processed for use with different algorithms. \\
 Each algorithm is responsible for transforming the data to the format that it requires.
 The neural network, for example, converts the sparse vectors from the feature creator
 into a dense representation that can be consumed by FANN \cite{fann}, a neural network library.  Each
-component is modular, so the output of some algorithms can potentially be combined with others ($A_i$ in the diagram above).
+component is modular, so that it is easy to tune individual algorithms.
 
 
 \section{Features}
@@ -162,8 +162,8 @@ indicator variables).
 
 \begin{align*}
         \{ \ \ & \\
-        &"budget": 10000000,\\
-        &"budget\_bucket\_2: 1\\
+        &``budget": 10000000,\\
+        &``budget\_bucket\_2: 1\\
         \} \ \ &
 \end{align*}
 
@@ -189,9 +189,9 @@ an actor and director.  The cast roles which we include are:
 
 \begin{align*}
         \{ \ \ & \\
-        &"Lasseter,John\_producer": 1,\\
-        &"Cummings,Jim\_actor": 1,\\
-        &"Mitchell,Nicole\_writer": 1,\\
+        &``Lasseter,John\_producer": 1,\\
+        &``Cummings,Jim\_actor": 1,\\
+        &``Mitchell,Nicole\_writer": 1,\\
         \} \ \ &
 \end{align*}
 
@@ -201,8 +201,8 @@ genre associated with a movie in the IMDb dataset.
 
 \begin{align*}
         \{\ \ &\\
-        &"genre\_Family": 1,\\
-        &"genre\_Comedy": 1,\\
+        &``genre\_Family": 1,\\
+        &``genre\_Comedy": 1,\\
         \}\ \ &
 \end{align*}
 
@@ -213,9 +213,9 @@ IMDb dataset.
 
 \begin{align*}
         \{\ \ &\\
-        &"character-name-in-title": 1,\\
-        &"sequel": 1,\\
-        &"friendship": 1,\\
+        &``character-name-in-title": 1,\\
+        &``sequel": 1,\\
+        &``friendship": 1,\\
         \}\ \ &
 \end{align*}
 
@@ -226,12 +226,12 @@ features, one for the month, year, and both month and year.
 
 \begin{align*}
         \{\ \ &\\
-        &"release\ (traverse\ film\ festival)\ (August)": 1, \\
-        &"release\ (traverse\ film\ festival)\ (2014)": 1, \\
-        &"release\ (traverse\ film\ festival)\ (August\ 2014)": 1, \\
-        &"release\ (premiere)\ (February)": 1, \\
-        &"release\ (premiere)\ (2014)": 1, \\
-        &"release\ (premiere)\ (February\ 2014)": 1, \\
+        &``release\ (traverse\ film\ festival)\ (August)": 1, \\
+        &``release\ (traverse\ film\ festival)\ (2014)": 1, \\
+        &``release\ (traverse\ film\ festival)\ (August\ 2014)": 1, \\
+        &``release\ (premiere)\ (February)": 1, \\
+        &``release\ (premiere)\ (2014)": 1, \\
+        &``release\ (premiere)\ (February\ 2014)": 1, \\
         \}\ \ &
 \end{align*}
 
@@ -242,8 +242,8 @@ budget production, or reduced in an indie movie.
 
 \begin{align*}
         \{\ \ &\\
-        &"budget\_bucket\_2\_Cummings,Jim\_actor": 1,\\
-        &"budget\_bucket\_2\_Klein,Sebastian\_actor": 1\\
+        &``budget\_bucket\_2\_Cummings,Jim\_actor": 1,\\
+        &``budget\_bucket\_2\_Klein,Sebastian\_actor": 1\\
         \}\ \ &
 \end{align*}
 
@@ -255,12 +255,31 @@ together and create better movies together.
 
 \begin{align*}
         \{\ \ &\\
-        &"Nolan,Christopher\_Cummings,Jim\_actor": 1,\\
-        &"Nolan,Christopher\_Klein,Sebastian\_actor": 1\\
+        &``Nolan,Christopher\_Cummings,Jim\_actor": 1,\\
+        &``Nolan,Christopher\_Klein,Sebastian\_actor": 1\\
         \}\ \ &
 \end{align*}
 
 \subsubsection{Standardized budget}
+In order to account for inflation, we added a feature which calculates the
+standard score of the movie budget based on other movies released that same
+year.  The standard score of the movie budget for a movie $M$ released in year
+$Y$ is given by
+
+\begin{eqnarray*}
+    z = \frac{x - \mu}{\sigma}
+\end{eqnarray*}
+where
+\begin{itemize}
+    \item $z$ is the standard score of the budget for movie $M$
+    \item $\mu$ is the mean of movie budgets released in year $Y$
+    \item $\sigma$ is the standard deviation of movie budgets released in year $Y$
+\end{itemize}
+\begin{align*}
+        \{\ \ &\\
+        &``standardized_budget": 0.57408881370714016,\\
+        \}\ \ &
+\end{align*}
 
 \subsubsection{Actor experience}
 
@@ -290,8 +309,12 @@ Cast & 0.65 & 2.56 \\
 Genre & 2.26 & 2.29 \\
 Keywords & 1.65 & 3.35 \\
 Release date & 1.69 & 2.26 \\
+\hline
 Budget $\times$ Cast & 4.54 & 5.65 \\
 Actor $\times$ Director & 2.67 & 5.96 \\
+\hline
+Standardized budget & 5.02 & 5.03 \\
+Cast experience & $\infty$ & $\infty$ \\
 \hline
 \end{tabular}
 \smallskip
@@ -303,33 +326,38 @@ These are also our largest feature sets.\\
 \hline
 Feature             & \shortstack[c]{Num.\\vars} & \shortstack[c]{Num.\\movies} & \shortstack[c]{Feature / \\ movie}  \\ [0.5ex] % inserts table 
 \hline
-Budget (raw)        & N/A & 5,278 (53\%) & 1 \\ % inserting body of the table
+Budget (raw)        & 1 & 5,278 (53\%) & 1 \\ % inserting body of the table
 Budget (bucketized) & 52 & 5,278 (53\%) & 1 \\
 Cast                & 169,973 & 9,883 (99\%) & 72 \\
 Genre               & 25 & 9,885 (99\%) & 2 \\
 Keywords            & 11,701 & 9,774 (98\%) & 75 \\
 Release date        & 10,500 & 9,884 (99\%) & 7 \\
+\hline
 Budget $\times$ Cast & 394,661 & 5,278 (53\%) & 92 \\
 Actor $\times$ Director & 282,672 & 8,630 (87\%) & 35 \\
+\hline
+Standardized budget & 1 & 5,278 (53\%) & 1 \\
+Cast experience & $\infty$ & $\infty$ & $\infty$ \\
 \hline %inserts single line
 \end{tabular}
 
 \subsection{Feature pruning}
 With combined features, our feature space size is around 800,000. It takes hours to train a Linear Regression Model using scikit-learn \cite{scikit} on such a large sample space. We did some experiments on feature removal to improve algorithm performance.
-\par In our experiments, we removed all the features that appear less or equal to $n$ times in the training data before training a model. We measured the number of features left after removal, time spent to train Linear Regression using scikit-learn and the standard error on test set.\\
+\par In our experiments, we removed all the features that appear less or equal to $n$ times in the training data before training a model. We measured the number of features left after removal and the standard error on test set.\\
 \\
-\begin{tabular}{|l| r r r|} % columns
+\begin{tabular}{|l| r r|} % columns
 \hline
-$n$ & Num. features left & Running time & Standard Error  \\ [0.5ex] % inserts table 
+$n$ & Num. features left & Standard Error  \\ [0.5ex] % inserts table 
 \hline
-0 & 723,000 & $>$ 10 Hours & N/A \\
-1 & 188,000 & 2.44 Hours & 0.79 \\
-2 & 93,000 & 2.34 Hours & 0.83 \\
-9 & 28,000 & 2.07 Hours & 1.12 \\ [1ex]
+0 & 723,000 & N/A \\
+1 & 188,000 & 0.79 \\
+2 & 93,000  & 0.83 \\
+9 & 28,000  & 1.12 \\ [1ex]
 \hline %inserts single line
 \end{tabular}
 \smallskip
 \\
+\textit{delete or update this paragraph?}
 \par Removing the features that
 appear only once in the training set gives huge improvements on performance
 while maintaining low standard errors on fitting the test set. This makes sense
