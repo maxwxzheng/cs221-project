@@ -6,7 +6,7 @@ import re
 import collections
 
 
-MINIMUM_FEATURE_COUNT = 3
+MINIMUM_FEATURE_COUNT = 2
 CAST_RE = 'cast_(\d+)_(\d+)'
 
 def encode(text):
