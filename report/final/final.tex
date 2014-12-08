@@ -352,7 +352,7 @@ our data set.  With combined features, this number balloons to over 800,000.
 When represented sparsely, the feature size without combinations is about 53MB, and 82MB with combinations.  The same data represented
 densely consumes approximately 3.5GB and 14GB respectively, indicating that many of the features are not associated with many movies.  Features are associated with an average of 8 movies, skewed heavily to the left. \\
 \\
-\scalebox{0.50}{\includegraphics{charts/movies_per_feature.eps}}
+\includegraphics[width=8.5cm]{charts/movies_per_feature.eps}
 \\
 \par An initial investigation into the importance of each feature was performed by
 running our baseline algorithm with each feature set individually.\\
@@ -479,7 +479,7 @@ Baseline            & 1.78 \\
 \hline
 Linear regression  & 0.81 \\
 Logistic regressor  & 0.92 \\
-SGD regressor       & 0.94 \\
+SGD regressor       & 0.82 \\
 Neural network      & 0.83 \\
 SGD with $ \lambda = 0.01 $ \& 100k iterations & 0.72 \\
 % SVM (rbf kernel)    & 1.09 \\
