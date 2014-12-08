@@ -464,7 +464,7 @@ We obtained the best results running SGD with a regularization constant of 0.01 
 and only 0.38 from our oracle.
 \\
 \subsubsection{Iterations and Regularization}
-We experimented with many different iteration counts and regularization constants, ultimately finding that 100,000 iterations and a regularization constant of 0.01 provided the best results.  Our data was highly susceptible to overfitting.  Using a low number of iterations and either no regularization or a regularization constant $ \lambda <= 0.001 $  provided the best results. 
+We experimented with many different iteration counts and regularization constants, ultimately finding that 100,000 iterations and a regularization constant of 0.01 provided the best results.  Our data was highly susceptible to overfitting.  Using a low number of iterations and either no regularization or a regularization constant $ \lambda <= 0.001 $  provided the best results.
 
 \scalebox{0.55}{\includegraphics{charts/sgd_iterations.eps}}
 \scalebox{0.55}{\includegraphics{charts/sgd_regularization.eps}}
@@ -536,58 +536,84 @@ algorithms.
 
 \section{Addendum}
 As an aside, we thought it would be fun to find out what metadata would
-generate the most successful movie. Using features with the largest weights
-learned using SGD, the following would be features of our super movie:
+generate the most successful movie. Here are the features with the highest
+weights in each feature dimension, learned using SGD:
+\begin{center}
+\begin{tabular}{|l|l|l|} % columns
+\hline
+Feature & Data & Weight \\ [0.5ex]
+\hline
+    Budget & \$60,000,000 & 0.03 \\
+    Budget & \$55,000,000 & 0.03 \\
+    Budget & \$100,000,000 & 0.03 \\
+    Budget & \$105,000,000 & 0.02 \\
+    Budget & \$95,000,000 & 0.02 \\
+\hline
+    Genre & Documentary & 0.60 \\
+    Genre &Animation & 0.37 \\
+    Genre &Drama & 0.25 \\
+    Genre &Music & 0.15 \\
+    Genre &Sport & 0.15 \\
+\hline
+    Release & New York in March & 0.23 \\
+    Release & \shortstack[l]{Independent Film Festival of Boston\\in April}& 0.17 \\
+    Release & Limited release in September & 0.15 \\
+    Release & Austin Film Festival in October& 0.15 \\
+    Release & New York Film Festival in October& 0.14 \\
+\hline
+    Keyword & stop-motion-animation & 0.29 \\
+    Keyword & based-on-play & 0.25 \\
+    Keyword & cartoon-dog & 0.22 \\
+    Keyword & mutant & 0.20 \\
+    Keyword & splatter & 0.20 \\
+    Keyword & italy & 0.20 \\
+    Keyword & splatter & 0.20 \\
+    Keyword & ampersand-in-title & 0.19 \\
+    Keyword & first-part & 0.18 \\
+    Keyword & cliff & 0.18 \\
+\hline
+    Actor & Jim Fitzpatrick & 0.22 \\
+    Actor & Ashish Vidyarthi & 0.16 \\
+    Actor & Dennis Quaid & 0.13 \\
+    Actor & George W. Bush & 0.12 \\
+    Actor & Stellan Skarsgård & 0.11 \\
+    Actor & Donald Trump & 0.11 \\
+    Actor & William Shatner & 0.11 \\
+    Actor & Jon Gries & 0.11 \\
+    Actor & Alan Oppenheimer & 0.11 \\
+\hline
+    Actress & Tabu & 0.12 \\
+    Actress & Bipasha Basu & 0.11 \\
+    Actress & Divya Dutta & 0.11 \\
+    Actress & Susan Tyrrell & 0.10 \\
+    Actress & Kiran Juneja & 0.10 \\
+    Actress & Milena Vukotic & 0.09 \\
+    Actress & Dolly Ahluwalia & 0.09 \\
+    Actress & Mona Marshall & 0.09 \\
+    Actress & Karen Strassman & 0.09 \\
+    Actress & Elizabeth Daily & 0.09 \\
+\hline
+    Producer & Sunil Lulla & 0.12 \\
+    Producer & Siddharth Roy Kapur & 0.12 \\
+    Producer & Aashish Singh & 0.11 \\
+    Producer & Peter Newman & 0.11 \\
+    Producer & Padam Bhushan & 0.10 \\
+\hline
+    Director & Imtiaz Ali & 0.09 \\
+    Director & Vishal Bhardwaj & 0.09 \\
+    Director & Don Coscarelli & 0.08 \\
+    Director & Jonathan Demme & 0.08 \\
+    Director & Tony Gatlif & 0.07 \\
+\hline %inserts single line
+\end{tabular}
+\end{center}
+
+\par Combining these top features would make for a rather strange movie (e.g. a stop-motion animated documentary based on a play about a cartoon mutant dog set in Italy) made with a budget of \$60M.\\
+\textit{Explain these}
 \begin{itemize}
-    \item Budget: 60,000,000
-    \item Genre: Documentary
-    \item Released in New York in March
-
-    \item Actor: Jim Fitzpatrick
-    \item Actor: Ashish Vidyarthi
-    \item Actor: Dennis Quaid
-    \item Actor: George W. Bush
-    \item Actor: Stellan Skarsgård
-    \item Actor: Donald Trump
-    \item Actor: William Shatner
-    \item Actor: Jon Gries
-    \item Actor: Alan Oppenheimer
-
-    \item Actress: Bipasha Basu
-    \item Actress: Divya Dutta
-    \item Actress: Susan Tyrrell
-    \item Actress: Kiran Juneja
-    \item Actress: Tabu
-    \item Actress: Milena Vukotic
-    \item Actress: Dolly Ahluwalia
-    \item Actress: Mona Marshall
-    \item Actress: Karen Strassman
-    \item Actress: Elizabeth Daily
-    \item Actress: Agnes Bruckner
-
-    \item Producer: Sunil Lulla
-    \item Producer: Siddharth Roy Kapur
-    \item Producer: Aashish Singh
-    \item Producer: Peter Newman
-    \item Producer: Padam Bhushan
-
-    \item Director: Imtiaz Ali
-    \item Director: Vishal Bhardwaj
-    \item Director: Don Coscarelli
-    \item Director: Jonathan Demme
-    \item Director: Tony Gatlif
-
-    \item Keyword: stop-motion-animation
-    \item Keyword: based-on-play
-    \item Keyword: cartoon-dog
-    \item Keyword: mutant
-    \item Keyword: splatter
-    \item Keyword: italy
-    \item Keyword: ampersand-in-title
-    \item Keyword: splatter
-    \item Keyword: first-part
-    \item Keyword: cliff
-
+    \item why bollywood
+    \item why b-grade actors
+    \item why nyc in march
 \end{itemize}
 
 % references section
