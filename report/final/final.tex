@@ -283,6 +283,20 @@ where
 
 \subsubsection{Cast and Crew Experience}
 
+To better generalize for cast and crew we had not trained on, we added features that would describe how much experience the cast and crew had.  For all Actors, Actresses, Actors and Actresses together, Producers, Directors, and all cast and crew combined, we calculated the mean number of movies they had previously worked on or appeared in.  We also calculated the 1st, 10th, 25th, 50th, 75th, 90th, and 99th percentiles for each group.
+
+\includegraphics[width=8cm]{charts/appearances.eps}
+
+The total number of movies a person had worked on was capped at 20, and each role-value pair was treated as an indicator feature.
+\begin{align*}
+        \{\ \ &\\
+        &``experience\_Actors\_mean\_14": 1,\\
+        &``experience\_ActorsAndActresses\_mean\_16": 1,\\
+        &``experience\_Actors\_10\_pctl\_3": 1,\\
+        &``experience\_Actors\_90\_pctl\_16": 1,\\
+        \}\ \ &
+\end{align*}
+
 \subsubsection{Cast and Crew Quality}
 
 \subsection{Analysis of feature sets}
