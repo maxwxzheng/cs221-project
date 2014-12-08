@@ -287,7 +287,7 @@ To better generalize for cast and crew we had not trained on, we added features 
 
 \includegraphics[width=8cm]{charts/appearances.eps}
 
-The total number of movies a person had worked on was capped at 20, and each role-value pair was treated as an indicator feature.
+The total number of movies a person had worked on was capped at 20, and each role-value pair was treated as an indicator feature, with values rounded to the nearest integer.
 \begin{align*}
         \{\ \ &\\
         &``experience\_Actors\_mean\_14": 1,\\
@@ -298,6 +298,21 @@ The total number of movies a person had worked on was capped at 20, and each rol
 \end{align*}
 
 \subsubsection{Cast and Crew Quality}
+
+Similar to cast and crew experience, we added features that would describe the quality of the cast and crew based on the rating of movies that they had worked on or appeared in previously.  The mean and percentiles approach as described above was also used for cast and crew quality.
+
+\includegraphics[width=8cm]{charts/crew_quality.eps}
+
+After the mean or percentile value was calculated, it was rounded to the nearest integer, and along with the role, acted as an indicator feature.
+
+\begin{align*}
+        \{\ \ &\\
+        &``rating\_Actors\_mean\_6": 1,\\
+        &``rating\_ActorsAndActresses\_mean\_7": 1,\\
+        &``rating\_Actors\_10\_pctl\_4": 1,\\
+        &``rating\_Actors\_90\_pctl\_8": 1,\\
+        \}\ \ &
+\end{align*}
 
 \subsection{Analysis of feature sets}
 In total, there are about 192,000 unique features without combined features for
