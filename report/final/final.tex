@@ -476,13 +476,20 @@ While we were able to return acceptable results with early stopping, achieving s
 We ran logistic regression using scikit-learn with default parameters.  The algorithm exhibited overfitting, with a training error of 0.0 and a relatively high test error of 0.9157.  We chose to focus on SGD instead of logistic regression because our data is prone to overfitting, and we were able to obtain better preliminary results and had greater control over the hyperparameters in the SGD implementation.  The total runtime was approximately 85 seconds.
 
 \subsection{Neural Network}
-\textit{This still needs to be updated.  I am waiting for the network to finish running.} \\ \\
 The neural network is implemented using the Fast Artificial Neural Network (FANN)
-API.  With two hidden layers, with 20 neurons in the first and 10 in the second,
-we have achieved a test error rate of 0.012, when the rating is represented as a
-number between 0 and 1.0, corresponding to an average error of approximately 1.1 out of 10.  \\
-\\
+API.  With three hidden layers, with 40 neurons in the first, 20 in the second, and 10 in the last,
+we have achieved a test error rate of 0.000926, when the rating is represented as a
+number between 0 and 1.0, corresponding to an average error of approximately 0.82 out of 10. 
+
+Our initial implementation of the neural network was quite slow, taking approximately
+12 hours to complete 100 iterations with a simple topology consisting of one hidden
+layer with 10 neurons.  This is due, in part, to the lack of support for sparse matrices in the FANN library, and the relatively large number of features we were training on.  This slowness made working with the neural network impractical, so we used PCA to reduce the number of features to 5,000 from 93,000, resulting in runtimes near 1 hour.  This feature reduction resulted in a loss of approximately 9\% of the variance in the data, artificially limiting the performance of the network.  \\
+
 \scalebox{0.55}{\includegraphics{charts/neural_network.eps}}
+
+Additionally, the neural network was susceptible to severe overfitting.  The FANN library doesn't have much built in support to prevent overfitting; the suggested approach is early stopping.  We did implement early stopping using a simple heuristic that proved to be effective, partitioning the data and stopping when the training error was falling but the test error started rising, after a period of falling.  We were able to get acceptable results using that approach, but the lack of the ability to tune regularization hyperparameters, the limited control provided by early stopping, and the loss of variance reduced the neural networks performance below the performance of simpler, more flexible models.
+
+More data and more generalized features, like the cast experience features, would likely help.  However, increasing the amount of data isn't necessarily feasible without adversely impacting the performance of the network, likely necessitating greater compute resources as well.  Other neural network implementation that provide better support for regularization and support sparse matrices would also be helpful.
 
 \section{Results}
 \smallskip
@@ -496,7 +503,7 @@ Baseline            & 1.78 \\
 Linear regression  & 0.81 \\
 Logistic regressor  & 0.92 \\
 SGD regressor       & 0.82 \\
-Neural network      & 0.83 \\
+Neural network      & 0.82 \\
 SGD with $ \lambda = 0.01 $ \& 100k iterations & 0.72 \\
 % SVM (rbf kernel)    & 1.09 \\
 % SVM (linear kernel) & 1.02 \\
