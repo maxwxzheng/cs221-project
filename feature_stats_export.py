@@ -31,5 +31,4 @@ def export_stats_for_file(data_file, csv_filename, features_counter_csv_filename
                 feature_count
             ])
 
-export_stats_for_file('data/features_with_cross.json', "data/features_with_cross_stats.csv", "data/features_counter_with_cross_stats.csv")
-export_stats_for_file('data/features_without_cross.json', "data/features_without_cross_stats.csv", "data/features_counter_without_cross_stats.csv")
+export_stats_for_file('data/features.json', "data/features_stats.csv", "data/features_counter_stats.csv")
