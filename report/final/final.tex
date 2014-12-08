@@ -298,7 +298,8 @@ densely consumes approximately 3.5GB and 14GB respectively, indicating that many
 \\
 \par An initial investigation into the importance of each feature was performed by
 running our baseline algorithm with each feature set individually.\\
-\\
+
+\begin{center}
 \begin{tabular}{|l|r r|} % columns
 \hline
 Feature & Dev error & Test error \\ [0.5ex] % inserts table 
@@ -317,7 +318,9 @@ Standardized budget & 5.02 & 5.03 \\
 Cast experience & $\infty$ & $\infty$ \\
 \hline
 \end{tabular}
+\end{center}
 \smallskip
+
 \par Here we note that some feature sets are overfitted to our dev dataset such as
 cast, keywords, release date, budget $\times$ cast and actor $\times$ director.
 These are also our largest feature sets.\\
@@ -344,7 +347,7 @@ Cast experience & $\infty$ & $\infty$ & $\infty$ \\
 \subsection{Feature pruning}
 With combined features, our feature space size is around 800,000. It takes hours to train a Linear Regression Model using scikit-learn \cite{scikit} on such a large sample space. We did some experiments on feature removal to improve algorithm performance.
 \par In our experiments, we removed all the features that appear less or equal to $n$ times in the training data before training a model. We measured the number of features left after removal and the standard error on test set.\\
-\\
+\begin{center}
 \begin{tabular}{|l| r r|} % columns
 \hline
 $n$ & Num. features left & Standard Error  \\ [0.5ex] % inserts table 
@@ -355,8 +358,9 @@ $n$ & Num. features left & Standard Error  \\ [0.5ex] % inserts table
 9 & 28,000  & 1.12 \\
 \hline %inserts single line
 \end{tabular}
+\end{center}
 \smallskip
-\\
+
 \textit{delete or update this paragraph?}
 \par Removing the features that
 appear only once in the training set gives huge improvements on performance
@@ -384,6 +388,7 @@ The k-means cluster for each movie is added to each movie's feature vector.
 Adding just 10 clusters provided a significant performance improvement after
 1,000 iterations of SGD.\\
 \\
+\begin{center}
 \begin{tabular}{|r| r|} % columns
 \hline
 Num. clusters & Test Error  \\ [0.5ex] % inserts table 
@@ -394,6 +399,7 @@ Num. clusters & Test Error  \\ [0.5ex] % inserts table
 1000 & 1.32 \\
 \hline %inserts single line
 \end{tabular}
+\end{center}
 
 \section{Algorithms}
 
@@ -403,6 +409,9 @@ parameters. We used feature removal threshold 1. The algorithm took 2.4 hours
 to run and gave standard error 0.79.
 
 \subsubsection{Regularization}
+Add some text here
+\scalebox{0.55}{\includegraphics{charts/sgd_iterations.eps}}
+\scalebox{0.55}{\includegraphics{charts/sgd_regularization.eps}}
 
 \subsection{Logistic Regression}
 
@@ -420,6 +429,8 @@ number between 0 and 1.0, corresponding to an average error of approximately 1.1
 The neural network is slow to learn, so we plan to reduce the number of features so we can
 iterate more quickly.  In addition, we plan to tune the network topology once we're able
 to achieve acceptable iteration speeds.
+\\
+\scalebox{0.55}{\includegraphics{charts/neural_network.eps}}
 
 \section{Results}
 \smallskip
