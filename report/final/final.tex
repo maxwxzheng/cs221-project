@@ -43,7 +43,7 @@ be able to predict the success of a movie before it is released. In this
 project, we try to predict the critical success of a movie, as shown by user
 ratings on IMDb \cite{imdb}, based solely on metadata about a movie available prior to it's
 release.
-
+\\
 \begin{itemize}
     \item Input: IMDb metadata for a movie related to it's creation and release
     \item Output: Predicted user rating of a movie, on a scale of 0-10
@@ -74,11 +74,13 @@ resulted in error rates of roughly 10\%.
 
 \section{Dataset}
 Our dataset is the list of all movies from IMDb that fulfill the following properties
+\\
 \begin{itemize}
 	\item Released in the US
 	\item Generated gross earnings in the US
 	\item Has at least 1,000 user votes to rate the movie
 \end{itemize}
+\bigskip
 
 \par After pruning the database of 3 million entries, we are left with 9,888
 movies which is a reasonable number for our algorithms to run on. Limiting the
@@ -97,25 +99,28 @@ $$ \sqrt{\frac{\sum_{i=1}^n(\text{Predicted}_i-\text{Actual}_i)^2}{n}} $$
 
 \subsection{Baseline}
 For our baseline, we included the following features:
+\\
 \begin{itemize}
 	\item Complete cast members, which includes actors, directors, producers, etc.
 	\item Movie genre
 	\item Keywords describing the movie
 \end{itemize}
+\bigskip
 
-This results in a standard error of 0.06 on the training data, and
+\par This results in a standard error of 0.06 on the training data, and
 1.78 on the test data.
 
 \subsection{Oracle}
 For our oracle, we added additional features which are movie data available
 \emph{after} a movie is released. These are:
+\\
 \begin{itemize}
 	\item Gross earnings
 	\item IMDb user ratings
 	\item Number of votes for the ratings
 \end{itemize}
-
-This results in a standard error of of 0.03 on the training data, and 0.34 on the test data.
+\bigskip
+\par This results in a standard error of of 0.03 on the training data, and 0.34 on the test data.
 \\
 \par We had initially added critic and audience ratings from Rotten Tomatoes, but it produced unexpected results, namely critic scores were negative weights and negative audience ratings had the opposite effect (movies rated \emph{Spilled} had larger weights than \emph{Upright})
 
@@ -123,22 +128,24 @@ This results in a standard error of of 0.03 on the training data, and 0.34 on th
 Our system is composed of a feature creator system, a snapshot of the IMDb dataset,
 and a variety of learning algorithms that operate on the information exported by
 the feature creator.
+
+\begin{center}
+    \includegraphics[width=8cm]{charts/system.eps}
+\end{center}
+
 \par The feature creator provides a framework that allows sub-component
 feature extractors to interact with the IMDb dataset, stored in MySQL.  The feature
 creator calls each extractor ($E_i$ in the diagram below) in turn for each of the movies we've selected for our
 dev and test sets, and merges their output features into a sparse feature vector for
 each movie.  An additional combinator step ($C_i$ in the diagram) is applied to generate feature
 combinations, e.g. \{movie director $\times$ movie actors\}.
+\\
 \par The creator is highly configurable so that extractors and combinators can easily be selectively enabled or disabled,
 and includes a caching layer to reduce the load on MySQL and speed up processing.
 The feature vectors are stored in JSON so that they can be easily
-post-processed for use with different algorithms. \\
-
-\begin{center}
-    \includegraphics[width=8cm]{charts/system.eps}
-\end{center}
-
-Each algorithm is responsible for transforming the data to the format that it requires.
+post-processed for use with different algorithms.
+\\
+\par Each algorithm is responsible for transforming the data to the format that it requires.
 The neural network, for example, converts the sparse vectors from the feature creator
 into a dense representation that can be consumed by FANN \cite{fann}, a neural network library.  Each
 component is modular, so that it is easy to tune individual algorithms.
@@ -449,22 +456,20 @@ sparsely, and gave a standard error of 0.81.
 \subsection{Stochastic Gradient Descent}
 
 We obtained the best results running SGD with a regularization constant of 0.01 over 100,000 iterations.  Total runtime was approximately 21 minutes, and peak memory consumption was approximately 20GB.
-
-We were able to obtain a standard error of 0.7197, over 1 point better than our baseline, 
+\\
+\par We were able to obtain a standard error of 0.7197, over 1 point better than our baseline, 
 and only 0.38 from our oracle.
-
+\\
 \subsubsection{Regularization}
-Add some text here
+\textit{Add some text here about regularization}
+\\
+\\
 \scalebox{0.55}{\includegraphics{charts/sgd_iterations.eps}}
 \scalebox{0.55}{\includegraphics{charts/sgd_regularization.eps}}
 
 \subsection{Logistic Regression}
 
 We ran logistic regression using scikit-learn with default parameters.  The algorithm exhibited overfitting, with a training error of 0.0 and a relatively high test error of 0.9157.  We chose to focus on SGD instead of logistic regression because our data is prone to overfitting, and we were able to obtain better preliminary results and had greater control over the hyperparameters in the SGD implementation.  The total runtime was approximately 85 seconds.
-
-\subsection{SVM}
-\textit{This needs to be updated, but I'm not sure how it was run originally.  It might be better to just drop it.}
-We used the implementation of SVM in scikit-learn with radial basis function (rbf) kernel and linear kernel. We used the feature removal threshold of 1. SVM with rbf kernel took 3.3 hours to run and gave standard error of 1.09. SVM with linear kernel took 3 minutes to run and gave standard error of 1.02.
 
 \subsection{Neural Network}
 \textit{This still needs to be updated.  I am waiting for the network to finish running.} \\ \\
@@ -504,23 +509,23 @@ Oracle              & 0.34 \\
 Linear algorithms are quick to train (60 seconds compared with over 10 hours
 for a neural network without PCA) and are not as susceptible to overfitting.
 They are also not as resource intensive to compute.
-
+\\
 \par Additionally, some benefits of the specific implementations of linear algorithms we used are:
 \begin{itemize}
     \item Easier to avoid overfitting with regularization hyperparameters
     \item Sparse matrix support, data sizes are 1GB
 \end{itemize}
-
-While we found that with the FANN neural networks:
+\bigskip
+\par While we found that with the FANN neural networks:
 \begin{itemize}
     \item Limited tunable hyperparameters
     \item Difficult to avoid overfitting -- early stopping heuristic does a decent job however
     \item Dense matrices required
 \end{itemize}
-
+\bigskip
 \par Neural Networks are able to learn more complex models, but this additional
 power can lead to overfitting and massive resource requirements.
-
+\\
 \par Reducing the feature set and stopping early helps with this, but in this
 case, these compromises result in performance comparable to the linear
 algorithms.
