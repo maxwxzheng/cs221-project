@@ -2,7 +2,6 @@ import csv
 import logging
 from collections import defaultdict
 
-import itertools
 import numpy
 from feature_extractor_base import Base
 from helpers import encode
@@ -113,9 +112,7 @@ class CastFeatureExtractor(Base):
                 writer = csv.writer(csvfile)
 
                 writer.writerow(['Movie'] + numeric_features)
-                for movie_id, appearances in itertools.chain.from_iterable(
-                        appearances_per_movie[role].iteritems() for role in roles
-                ):
+                for movie_id, appearances in self._merge_appearances(appearances_per_movie, roles).iteritems():
                     appearance_features = self._calculate_features_from_numeric_list(appearances)
                     row = [movie_id]
                     for numeric_feature in numeric_features:
@@ -127,3 +124,10 @@ class CastFeatureExtractor(Base):
                         features[movie_id]['%s_%s_%s_%s' % (name, '-'.join([str(role) for role in roles]), numeric_feature, bucket)] = 1
 
                     writer.writerow(row)
+
+    def _merge_appearances(self, appearances_per_movie, roles):
+        merged_lists = defaultdict(list)
+        for role in roles:
+            for movie_id, appearances in appearances_per_movie[role].iteritems():
+                merged_lists[movie_id].extend(appearances)
+        return merged_lists
