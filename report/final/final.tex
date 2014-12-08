@@ -314,6 +314,32 @@ After the mean or percentile value was calculated, it was rounded to the nearest
         \}\ \ &
 \end{align*}
 
+\subsubsection{K-means}
+The k-means cluster for each movie is added to each movie's feature vector.
+Adding just 10 clusters provided a significant performance improvement after
+1,000 iterations of SGD.
+
+\begin{center}
+\begin{tabular}{|r| r|} % columns
+\hline
+Num. clusters & Test Error  \\ [0.5ex] % inserts table 
+\hline
+0 & 1.75 \\
+10 & 0.97 \\
+100 & 1.02 \\
+1000 & 1.32 \\
+\hline %inserts single line
+\end{tabular}
+\end{center}
+
+Clusters added were treated as indicator features.
+
+\begin{align*}
+        \{\ \ &\\
+        &``cluster\_4": 1,\\
+        \}\ \ &
+\end{align*}
+
 \subsection{Analysis of feature sets}
 In total, there are about 192,000 unique features without combined features for
 our data set.  With combined features, this number balloons to over 800,000.
@@ -413,24 +439,6 @@ capture 91\% of the variance from the data.
 \scalebox{0.575}{\includegraphics{charts/pca.eps}}
 \\
 \scalebox{0.55}{\includegraphics{charts/pca_variance.eps}}
-
-\subsection{K-means}
-The k-means cluster for each movie is added to each movie's feature vector.
-Adding just 10 clusters provided a significant performance improvement after
-1,000 iterations of SGD.\\
-\\
-\begin{center}
-\begin{tabular}{|r| r|} % columns
-\hline
-Num. clusters & Test Error  \\ [0.5ex] % inserts table 
-\hline
-0 & 1.75 \\
-10 & 0.97 \\
-100 & 1.02 \\
-1000 & 1.32 \\
-\hline %inserts single line
-\end{tabular}
-\end{center}
 
 \section{Algorithms}
 
