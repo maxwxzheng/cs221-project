@@ -29,7 +29,7 @@ class ScikitKmeansRunner(object):
         counts = [int(self.arguments['--clusters'])] if self.arguments['--clusters'] else [10, 100, 500, 1000]
 
         for count in counts:
-            self.run_model(cluster.KMeans(n_clusters=count, verbose=5, n_jobs=-1, precompute_distances=True, copy_x=False), "k_means_%s" % count)
+            self.run_model(cluster.KMeans(n_clusters=count, verbose=5, n_jobs=-1, precompute_distances=True, copy_x=False, n_init=128), "k_means_%s" % count)
 
     def load_data(self):
         self.data = json.load(open('data/features.json'))
