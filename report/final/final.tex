@@ -159,7 +159,6 @@ budgets for the movie.  We only consider movies with budgets in US dollars, and
 we take the largest proposed budget.  We also consider using budgets in two
 ways -- using raw dollar values or bucketing the value into \$5M chunks (as
 indicator variables).
-
 \begin{align*}
         \{ \ \ & \\
         &``budget": 10000000,\\
@@ -186,7 +185,6 @@ an actor and director.  The cast roles which we include are:
 	\item Production designer
 	\item Miscellaneous crew
 \end{itemize}
-
 \begin{align*}
         \{ \ \ & \\
         &``Lasseter,John\_producer": 1,\\
@@ -198,7 +196,6 @@ an actor and director.  The cast roles which we include are:
 \subsubsection{Genre}
 Genre features are indicator features that are activated for each
 genre associated with a movie in the IMDb dataset.
-
 \begin{align*}
         \{\ \ &\\
         &``genre\_Family": 1,\\
@@ -210,7 +207,6 @@ genre associated with a movie in the IMDb dataset.
 Keyword features are indicator features that are activated for
 each searchable tag that is associated with a movie in the
 IMDb dataset.
-
 \begin{align*}
         \{\ \ &\\
         &``character-name-in-title": 1,\\
@@ -223,7 +219,6 @@ IMDb dataset.
 Release dates are also indicator features that are activated for each release
 in the US across festivals and premieres. For each release, we generate 3
 features, one for the month, year, and both month and year.
-
 \begin{align*}
         \{\ \ &\\
         &``release\ (traverse\ film\ festival)\ (August)": 1, \\
@@ -239,7 +234,6 @@ features, one for the month, year, and both month and year.
 We use the bucketized budget data and join that with the extracted cast
 features. The idea is that an actor's star power will be amplified by a big
 budget production, or reduced in an indie movie.
-
 \begin{align*}
         \{\ \ &\\
         &``budget\_bucket\_2\_Cummings,Jim\_actor": 1,\\
@@ -252,7 +246,6 @@ We create new features for each combination of actor and director in each cast
 list (where actor includes both actors and actresses, treated distinctly in our
 dataset). The intuition is that some pairs of actors and directors work well
 together and create better movies together.
-
 \begin{align*}
         \{\ \ &\\
         &``Nolan,Christopher\_Cummings,Jim\_actor": 1,\\
@@ -284,9 +277,10 @@ where
 \subsubsection{Cast and Crew Experience}
 \paragraph{Experience}
 
-To better generalize for cast and crew we had not trained on, we added features that would describe how much experience the cast and crew had.  For all Actors, Actresses, Actors and Actresses together, Producers, Directors, and all cast and crew combined, we calculated the mean number of movies they had previously worked on or appeared in.  We also calculated the 1st, 10th, 25th, 50th, 75th, 90th, and 99th percentiles for each group.
-
-\includegraphics[width=8cm]{charts/appearances.eps}
+To better generalize for cast and crew we had not trained on, we added features that would describe how much experience the cast and crew had.  For the buckets of all Actors, Actresses, Producers, Directors, the group of of all Actors and Actresses, and the entire cast and crew, we calculated the mean number of movies they had previously worked on or appeared in.  We also calculated the 1st, 10th, 25th, 50th, 75th, 90th, and 99th percentiles for each group.
+\begin{center}
+    \scalebox{0.5}{\includegraphics{charts/appearances.eps}}
+\end{center}
 
 The total number of movies a person had worked on was capped at 20, and each role-value pair was treated as an indicator feature, with values rounded to the nearest integer.
 \begin{align*}
@@ -301,11 +295,11 @@ The total number of movies a person had worked on was capped at 20, and each rol
 \paragraph{Quality}
 
 Similar to cast and crew experience, we added features that would describe the quality of the cast and crew based on the rating of movies that they had worked on or appeared in previously.  The mean and percentiles approach as described above was also used for cast and crew quality.
+\begin{center}
+    \scalebox{0.45}{\includegraphics{charts/crew_quality.eps}}
+\end{center}
 
-\includegraphics[width=8cm]{charts/crew_quality.eps}
-
-After the mean or percentile value was calculated, it was rounded to the nearest integer, and along with the role, acted as an indicator feature.
-
+After the mean or percentile value was calculated, it was rounded to the nearest integer, and along with the role, added as an indicator feature.
 \begin{align*}
         \{\ \ &\\
         &``rating\_Actors\_mean\_6": 1,\\
@@ -320,7 +314,7 @@ The k-means cluster for each movie is added to each movie's feature vector.
 Adding just 10 clusters provided a significant performance improvement after
 1,000 iterations of SGD.  The k-means algorithm was initialized with 128 different
 centroid seeds using the k-means++ method, the best result is retained.  Total
-runtime was less than 4 minutes.
+runtime was less than 4 minutes.  All of our algorithms included k-means clusters as features.
 
 \begin{center}
 \begin{tabular}{|r| r|} % columns
@@ -336,20 +330,18 @@ Num. clusters & Test Error  \\ [0.5ex] % inserts table
 \end{center}
 
 Clusters added were treated as indicator features.
-
 \begin{align*}
         \{\ \ &\\
         &``cluster\_4": 1,\\
         \}\ \ &
 \end{align*}
 
-All of our algorithms included K-means clusters as features.
-
 \subsection{Analysis of feature sets}
 In total, there are about 192,000 unique features without combined features for
 our data set.  With combined features, this number balloons to over 800,000.
-
-\includegraphics[width=10cm]{charts/features.eps}
+\begin{center}
+    \scalebox{0.55}{\includegraphics{charts/features.eps}}
+\end{center}
 
 When represented sparsely, the feature size without combinations is about 53MB, and 82MB with combinations.  The same data represented
 densely consumes approximately 3.5GB and 14GB respectively, indicating that many of the features are not associated with many movies.  We chose to prune features that do not represent at least 3 movies, when
@@ -358,7 +350,7 @@ representing 20.2 movies. 97.9\% of our features represent fewer than 100 movies
 is skewed heavily to the left, which has the tendency to cause overfitting, which we address in
 our algorithms. \\
 \\
-\includegraphics[width=8.5cm]{charts/movies_per_feature.eps}
+    \scalebox{0.45}{\includegraphics{charts/movies_per_feature.eps}}
 \\
 \par An initial investigation into the importance of each feature was performed by
 running our baseline algorithm with each feature set individually.\\
@@ -560,12 +552,6 @@ algorithms.
 \bibitem{imdb}
 Internet Movie Database: \texttt{\url{http://imdb.com}}
 
-\bibitem{fann}
-Fast Artificial Neural Network Library: \texttt{\url{http://leenissen.dk/fann/wp/}}
-
-\bibitem{scikit}
-Scikit-learn: \texttt{\url{http://scikit-learn.org/stable/}}
-
 \bibitem{marketing}
 H-T Thorsten, H. Mark, W. Gianfranco, \emph{Determinants of Motion Picture Box
 Office and Profitability: An Interrelationship Approach} \hskip 1em plus 0.5em
@@ -584,12 +570,12 @@ Films}\hskip 1em plus
 \bibitem{cooper}
 S.~Mevawala and S.~Phadke, \emph{BoxOffice: Machine Learning Methods for Predicting Audience Film Ratings}\hskip 1em plus
   0.5em minus 0.4em\relax The Cooper Union for the Advancement of Science and Art.
-  
-\bibitem{imdb_api}
-\texttt{\url{http://www.imdb.com/interfaces}}
 
-\bibitem{rt_api}
-\texttt{\url{http://developer.rottentomatoes.com}}
+\bibitem{fann}
+Fast Artificial Neural Network Library: \texttt{\url{http://leenissen.dk/fann/wp/}}
+
+\bibitem{scikit}
+Scikit-learn: \texttt{\url{http://scikit-learn.org/stable/}}
 \end{thebibliography}
 
 % that's all folks
