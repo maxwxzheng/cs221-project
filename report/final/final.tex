@@ -454,6 +454,9 @@ We used the implementation of Linear Regression in scikit-learn with default
 parameters. The algorithm took 6 seconds to run when the data was represented
 sparsely, and gave a standard error of 0.81.
 
+Linear regression was somewhat susceptible to overfitting, and is not tunable, so we used
+linear regression primarily to quickly check work in progress,
+
 \subsection{Stochastic Gradient Descent}
 
 We obtained the best results running SGD with a regularization constant of 0.01 over 100,000 iterations.  Total runtime was approximately 21 minutes, and peak memory consumption was approximately 20GB.
@@ -461,10 +464,12 @@ We obtained the best results running SGD with a regularization constant of 0.01 
 We were able to obtain a standard error of 0.7197, over 1 point better than our baseline, 
 and only 0.38 from our oracle.
 
-\subsubsection{Regularization}
-Add some text here
+\subsubsection{Iterations and Regularization}
+We experimented with many different iteration counts and regularization constants, ultimately finding that 100,000 iterations and a regularization constant of 0.01 provided the best results.  Our data was highly susceptible to overfitting.  Using a low number of iterations and either no regularization or a regularization constant $ \lambda <= 0.001 $  provided the best results. 
 \scalebox{0.55}{\includegraphics{charts/sgd_iterations.eps}}
 \scalebox{0.55}{\includegraphics{charts/sgd_regularization.eps}}
+
+While we were able to return acceptable results with early stopping, achieving standard errors as low as 0.76, our results were not as consistent as they were with a large number of iterations and a tuned regularization constant.  Our SGD implementation takes fairly large steps in its earliest iterations, and makes progressively smaller updates as it runs.  Since our algorithm was converging well, we chose not to adjust the step size, meaning we didn't have as much control of the test error using early stopping as we did by tuning the regularization constant.
 
 \subsection{Logistic Regression}
 
