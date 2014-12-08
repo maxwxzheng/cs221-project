@@ -424,33 +424,60 @@ We used the implementation of SVM in scikit-learn with radial basis function (rb
 The neural network is implemented using the Fast Artificial Neural Network (FANN)
 API.  With two hidden layers, with 20 neurons in the first and 10 in the second, 
 we have achieved a test error rate of 0.012, when the rating is represented as a
-number between 0 and 1.0, corresponding to an average error of approximately 1.1 out of 10.  
-
-The neural network is slow to learn, so we plan to reduce the number of features so we can
-iterate more quickly.  In addition, we plan to tune the network topology once we're able
-to achieve acceptable iteration speeds.
+number between 0 and 1.0, corresponding to an average error of approximately 1.1 out of 10.  \\
 \\
 \scalebox{0.55}{\includegraphics{charts/neural_network.eps}}
 
 \section{Results}
 \smallskip
-\begin{tabular}{|l |l l|} % columns
+\begin{center}
+\begin{tabular}{|l | l|} % columns
 \hline
-Model               & Time to fit & Standard Error  \\ [0.5ex] % inserts table 
+Model               & Standard Error  \\ [0.5ex] % inserts table 
 \hline
-Neural network      & $>$ 10 hours  & 1.1 \\
-Linear regression   & 2.4 hours   & 0.79 \\
-SVM (rbf kernel)    & 3.3 hours   & 1.09 \\
-SVM (linear kernel) & 3 minutes   & 1.02 \\ [1ex]
+Baseline            & 1.78 \\
+\hline
+Logistic regressor  & 0.96 \\
+SGD regressor       & 0.94 \\
+Neural network      & 0.83 \\
+SGD with 0.01 regularization & 0.75 \\
+% SVM (rbf kernel)    & 1.09 \\
+% SVM (linear kernel) & 1.02 \\
+\hline
+Oracle              & 0.34 \\
 \hline %inserts single line
 \end{tabular}
+\end{center}
 \smallskip
-\\
-\par The best model we have so far is Linear Regression which gives 0.79 test error.
-Compare this to our baseline test error of 1.78 and oracle test error of 0.34.
-We believe the improvement is mostly from feature tuning.
+
 
 \section{Analysis}
+
+Linear algorithms are quick to train (60 seconds compared with over 10 hours
+for a neural network without PCA) and are not as susceptible to overfitting.
+They are also not as resource intensive to compute.
+
+\par Additionally, some benefits of the specific implementations of linear algorithms we used are:
+\begin{itemize}
+    \item Easier to avoid overfitting with regularization hyperparameters
+    \item Sparse matrix support, data sizes are 1GB
+\end{itemize}
+
+While we found that with the FANN neural networks:
+\begin{itemize}
+    \item Limited tunable hyperparameters
+    \item Difficult to avoid overfitting -- early stopping heuristic does a decent job however
+    \item Dense matrices required
+\end{itemize}
+
+\par Neural Networks are able to learn more complex models, but this additional
+power can lead to overfitting and massive resource requirements.
+
+\par Reducing the feature set and stopping early helps with this, but in this
+case, these compromises result in performance comparable to the linear
+algorithms.
+
+
 
 \section{Acknowledgements}
 
