@@ -317,7 +317,8 @@ After the mean or percentile value was calculated, it was rounded to the nearest
 \subsubsection{K-means}
 The k-means cluster for each movie is added to each movie's feature vector.
 Adding just 10 clusters provided a significant performance improvement after
-1,000 iterations of SGD.
+1,000 iterations of SGD.  The k-means algorithm was initialized with 10 different
+centroid seeds using the k-means++ method, the best result is retained.
 
 \begin{center}
 \begin{tabular}{|r| r|} % columns
@@ -339,6 +340,8 @@ Clusters added were treated as indicator features.
         &``cluster\_4": 1,\\
         \}\ \ &
 \end{align*}
+
+All of our algorithms included K-means clusters as features.
 
 \subsection{Analysis of feature sets}
 In total, there are about 192,000 unique features without combined features for
@@ -476,10 +479,11 @@ Model               & Standard Error  \\ [0.5ex] % inserts table
 \hline
 Baseline            & 1.78 \\
 \hline
-Logistic regressor  & 0.96 \\
+Linear regression  & 0.81 \\
+Logistic regressor  & 0.92 \\
 SGD regressor       & 0.94 \\
 Neural network      & 0.83 \\
-SGD with 0.01 regularization & 0.75 \\
+SGD with 0.01 regularization and 100,000 iterations & 0.72 \\
 % SVM (rbf kernel)    & 1.09 \\
 % SVM (linear kernel) & 1.02 \\
 \hline
