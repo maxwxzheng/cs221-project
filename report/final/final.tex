@@ -347,9 +347,7 @@ All of our algorithms included K-means clusters as features.
 In total, there are about 192,000 unique features without combined features for
 our data set.  With combined features, this number balloons to over 800,000.
 
-\scalebox{0.55}{\includegraphics{charts/features_without_cross_chart.eps}}
-
-\scalebox{0.55}{\includegraphics{charts/features_with_cross_chart.eps}}
+\includegraphics[width=10cm]{charts/features.eps}
 
 When represented sparsely, the feature size without combinations is about 53MB, and 82MB with combinations.  The same data represented
 densely consumes approximately 3.5GB and 14GB respectively, indicating that many of the features are not associated with many movies.  Features are associated with an average of 8 movies, skewed heavily to the left. \\
@@ -433,9 +431,9 @@ increasing the threshold $n$ doesn't give too much performance gain but worsens
 the test error.
 
 \subsection{Principal Component Analysis}
-We ran Principal Component Analysis, PCA, on our features to further analyze
-the data, and to reduce our feature size for the neural network. With PCA, we
-are able to reduce our feature set to 5,000.  It shows that the first feature
+We ran Principal Component Analysis, PCA, on our features to further reduce
+our feature size for the neural network. With PCA, we
+are able to reduce our feature set to 5,000.  The first feature
 represents about 1.5\% of the variance.  Further, the first 5,000 features
 capture 91\% of the variance from the data.
 \\
