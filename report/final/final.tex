@@ -60,7 +60,7 @@ of success. Relatedly, Deniz and Hasbrouck \cite{greenlight} performed
 statistical analysis on the top 150 grossing movies of 2010 and found that
 genre, MPAA rating, budget, star power, adaptation from another medium, sequels
 and remakes are significant predictors
-of box office revenue. 
+of box office revenue.
 \\
 \par There are also other student projects that attempted to predict user
 ratings. One was done for the Machine Learning class (CS229) \cite{hitorflop},
@@ -175,7 +175,7 @@ indicator variables).
 
 \subsubsection{Cast}
 The cast feature extractor generates indicator features for each
-cast and crew member associated with a film, for each job they 
+cast and crew member associated with a film, for each job they
 performed.  An individual could potentially appear more than once,
 if they performed different jobs, for example, if they were both
 an actor and director.  The cast roles which we include are:
@@ -326,7 +326,7 @@ runtime was less than 4 minutes.  All of our algorithms included k-means cluster
 \begin{center}
 \begin{tabular}{|r| r|} % columns
 \hline
-Num. clusters & Test Error  \\ [0.5ex] % inserts table 
+Num. clusters & Test Error  \\ [0.5ex] % inserts table
 \hline
 0 & 1.75 \\
 10 & 0.97 \\
@@ -365,7 +365,7 @@ running our baseline algorithm with each feature set individually.\\
 \begin{center}
 \begin{tabular}{|l|r r|} % columns
 \hline
-Feature & Dev error & Test error \\ [0.5ex] % inserts table 
+Feature & Dev error & Test error \\ [0.5ex] % inserts table
 \hline % inserts single horizontal line
 Budget (raw) & 5.89 & 5.87 \\ % inserting body of the table
 Budget (bucketized) & 4.62 & 4.68 \\
@@ -390,7 +390,7 @@ These are also our largest feature sets.\\
 \\
 \begin{tabular}{|l| r r r|} % columns
 \hline
-Feature             & \shortstack[c]{Num.\\vars} & \shortstack[c]{Num.\\movies} & \shortstack[c]{Feature / \\ movie}  \\ [0.5ex] % inserts table 
+Feature             & \shortstack[c]{Num.\\vars} & \shortstack[c]{Num.\\movies} & \shortstack[c]{Feature / \\ movie}  \\ [0.5ex] % inserts table
 \hline
 Budget (raw)        & 1 & 5,278 (53\%) & 1 \\ % inserting body of the table
 Budget (bucketized) & 52 & 5,278 (53\%) & 1 \\
@@ -413,7 +413,7 @@ With combined features, our feature space size is around 800,000. It takes hours
 \begin{center}
 \begin{tabular}{|l| r r|} % columns
 \hline
-$n$ & Num. features left & Standard Error  \\ [0.5ex] % inserts table 
+$n$ & Num. features left & Standard Error  \\ [0.5ex] % inserts table
 \hline
 0 & 723,000 & N/A \\
 1 & 188,000 & 0.79 \\
@@ -457,7 +457,7 @@ sparsely, and gave a standard error of 0.81.
 
 We obtained the best results running SGD with a regularization constant of 0.01 over 100,000 iterations.  Total runtime was approximately 21 minutes, and peak memory consumption was approximately 20GB.
 \\
-\par We were able to obtain a standard error of 0.7197, over 1 point better than our baseline, 
+\par We were able to obtain a standard error of 0.7197, over 1 point better than our baseline,
 and only 0.38 from our oracle.
 \\
 \subsubsection{Regularization}
@@ -474,7 +474,7 @@ We ran logistic regression using scikit-learn with default parameters.  The algo
 \subsection{Neural Network}
 \textit{This still needs to be updated.  I am waiting for the network to finish running.} \\ \\
 The neural network is implemented using the Fast Artificial Neural Network (FANN)
-API.  With two hidden layers, with 20 neurons in the first and 10 in the second, 
+API.  With two hidden layers, with 20 neurons in the first and 10 in the second,
 we have achieved a test error rate of 0.012, when the rating is represented as a
 number between 0 and 1.0, corresponding to an average error of approximately 1.1 out of 10.  \\
 \\
@@ -485,7 +485,7 @@ number between 0 and 1.0, corresponding to an average error of approximately 1.1
 \begin{center}
 \begin{tabular}{|l | l|} % columns
 \hline
-Model               & Standard Error  \\ [0.5ex] % inserts table 
+Model               & Standard Error  \\ [0.5ex] % inserts table
 \hline
 Baseline            & 1.78 \\
 \hline
@@ -530,9 +530,61 @@ power can lead to overfitting and massive resource requirements.
 case, these compromises result in performance comparable to the linear
 algorithms.
 
+\section{Addendum}
+As an aside, we thought it would be fun to find out what metadata would
+generate the most successful movie. Using features with the largest weights
+learned using SGD, the following would be features of our super movie:
+\begin{itemize}
+    \item Budget: 60,000,000
+    \item Genre: Documentary
+    \item Released in New York in March
 
+    \item Actor: Jim Fitzpatrick
+    \item Actor: Ashish Vidyarthi
+    \item Actor: Dennis Quaid
+    \item Actor: George W. Bush
+    \item Actor: Stellan Skarsgård
+    \item Actor: Donald Trump
+    \item Actor: William Shatner
+    \item Actor: Jon Gries
+    \item Actor: Alan Oppenheimer
 
-\section{Acknowledgements}
+    \item Actress: Bipasha Basu
+    \item Actress: Divya Dutta
+    \item Actress: Susan Tyrrell
+    \item Actress: Kiran Juneja
+    \item Actress: Tabu
+    \item Actress: Milena Vukotic
+    \item Actress: Dolly Ahluwalia
+    \item Actress: Mona Marshall
+    \item Actress: Karen Strassman
+    \item Actress: Elizabeth Daily
+    \item Actress: Agnes Bruckner
+
+    \item Producer: Sunil Lulla
+    \item Producer: Siddharth Roy Kapur
+    \item Producer: Aashish Singh
+    \item Producer: Peter Newman
+    \item Producer: Padam Bhushan
+
+    \item Director: Imtiaz Ali
+    \item Director: Vishal Bhardwaj
+    \item Director: Don Coscarelli
+    \item Director: Jonathan Demme
+    \item Director: Tony Gatlif
+
+    \item Keyword: stop-motion-animation
+    \item Keyword: based-on-play
+    \item Keyword: cartoon-dog
+    \item Keyword: mutant
+    \item Keyword: splatter
+    \item Keyword: italy
+    \item Keyword: ampersand-in-title
+    \item Keyword: splatter
+    \item Keyword: first-part
+    \item Keyword: cliff
+
+\end{itemize}
 
 % references section
 
