@@ -43,7 +43,7 @@ be able to predict the success of a movie before it is released. In this
 project, we try to predict the critical success of a movie, as shown by user
 ratings on IMDb \cite{imdb}, based solely on metadata about a movie available prior to it's
 release.
-
+\\
 \begin{itemize}
     \item Input: IMDb metadata for a movie related to it's creation and release
     \item Output: Predicted user rating of a movie, on a scale of 0-10
@@ -74,11 +74,13 @@ resulted in error rates of roughly 10\%.
 
 \section{Dataset}
 Our dataset is the list of all movies from IMDb that fulfill the following properties
+\\
 \begin{itemize}
 	\item Released in the US
 	\item Generated gross earnings in the US
 	\item Has at least 1,000 user votes to rate the movie
 \end{itemize}
+\bigskip
 
 \par After pruning the database of 3 million entries, we are left with 9,888
 movies which is a reasonable number for our algorithms to run on. Limiting the
@@ -97,25 +99,28 @@ $$ \sqrt{\frac{\sum_{i=1}^n(\text{Predicted}_i-\text{Actual}_i)^2}{n}} $$
 
 \subsection{Baseline}
 For our baseline, we included the following features:
+\\
 \begin{itemize}
 	\item Complete cast members, which includes actors, directors, producers, etc.
 	\item Movie genre
 	\item Keywords describing the movie
 \end{itemize}
+\bigskip
 
-This results in a standard error of 0.06 on the training data, and
+\par This results in a standard error of 0.06 on the training data, and
 1.78 on the test data.
 
 \subsection{Oracle}
 For our oracle, we added additional features which are movie data available
 \emph{after} a movie is released. These are:
+\\
 \begin{itemize}
 	\item Gross earnings
 	\item IMDb user ratings
 	\item Number of votes for the ratings
 \end{itemize}
-
-This results in a standard error of of 0.03 on the training data, and 0.34 on the test data.
+\bigskip
+\par This results in a standard error of of 0.03 on the training data, and 0.34 on the test data.
 \\
 \par We had initially added critic and audience ratings from Rotten Tomatoes, but it produced unexpected results, namely critic scores were negative weights and negative audience ratings had the opposite effect (movies rated \emph{Spilled} had larger weights than \emph{Upright})
 
@@ -123,22 +128,24 @@ This results in a standard error of of 0.03 on the training data, and 0.34 on th
 Our system is composed of a feature creator system, a snapshot of the IMDb dataset,
 and a variety of learning algorithms that operate on the information exported by
 the feature creator.
+
+\begin{center}
+    \includegraphics[width=8cm]{charts/system.eps}
+\end{center}
+
 \par The feature creator provides a framework that allows sub-component
 feature extractors to interact with the IMDb dataset, stored in MySQL.  The feature
 creator calls each extractor ($E_i$ in the diagram below) in turn for each of the movies we've selected for our
 dev and test sets, and merges their output features into a sparse feature vector for
 each movie.  An additional combinator step ($C_i$ in the diagram) is applied to generate feature
 combinations, e.g. \{movie director $\times$ movie actors\}.
+\\
 \par The creator is highly configurable so that extractors and combinators can easily be selectively enabled or disabled,
 and includes a caching layer to reduce the load on MySQL and speed up processing.
 The feature vectors are stored in JSON so that they can be easily
-post-processed for use with different algorithms. \\
-
-\begin{center}
-    \includegraphics[width=8cm]{charts/system.eps}
-\end{center}
-
-Each algorithm is responsible for transforming the data to the format that it requires.
+post-processed for use with different algorithms.
+\\
+\par Each algorithm is responsible for transforming the data to the format that it requires.
 The neural network, for example, converts the sparse vectors from the feature creator
 into a dense representation that can be consumed by FANN \cite{fann}, a neural network library.  Each
 component is modular, so that it is easy to tune individual algorithms.
@@ -375,7 +382,7 @@ Budget $\times$ Cast & 4.54 & 5.65 \\
 Actor $\times$ Director & 2.67 & 5.96 \\
 \hline
 Standardized budget & 5.02 & 5.03 \\
-Cast experience & $\infty$ & $\infty$ \\
+Cast experience & 0.80 & 0.90 \\
 \hline
 \end{tabular}
 \end{center}
@@ -406,6 +413,7 @@ Cast experience & 1,230 & 9,886 (99\%) & 94 \\
 
 \subsection{Feature pruning}
 With combined features, our feature space size is around 800,000. It takes hours to train a Linear Regression Model using scikit-learn \cite{scikit} on such a large sample space. We did some experiments on feature removal to improve algorithm performance.
+\\
 \par In our experiments, we removed all the features that appear less or equal to $n$ times in the training data before training a model. We measured the number of features left after removal and the standard error on test set.\\
 \begin{center}
 \begin{tabular}{|l| r r|} % columns
@@ -449,37 +457,46 @@ capturing 91\% of the variance in the data.
 We used the implementation of Linear Regression in scikit-learn with default
 parameters. The algorithm took 6 seconds to run when the data was represented
 sparsely, and gave a standard error of 0.81.
+\\
+\par Linear regression was somewhat susceptible to overfitting, and is not tunable, so we used
+linear regression primarily to quickly check work in progress,
 
 \subsection{Stochastic Gradient Descent}
 
 We obtained the best results running SGD with a regularization constant of 0.01 over 100,000 iterations.  Total runtime was approximately 21 minutes, and peak memory consumption was approximately 20GB.
-
-We were able to obtain a standard error of 0.7197, over 1 point better than our baseline,
+\\
+\par We were able to obtain a standard error of 0.7197, over 1 point better than our baseline,
+>>>>>>> upstream/master
 and only 0.38 from our oracle.
-
-\subsubsection{Regularization}
-
-We experimented with different regularization constants to prevent overfitting. Running SGD with a regulartization contant smaller than 0.01 leads to severe overfitting. When regularization constant is at around 0.05, test error and training error seem to converge. When regularization constant is at 0.01, although training error and test error haven't totally converged, we get the smallest training error. So we decided to use 0.01 as regularization constant for SGD.
+\\
+\subsubsection{Iterations and Regularization}
+We experimented with many different iteration counts and regularization constants, ultimately finding that 100,000 iterations and a regularization constant of 0.01 provided the best results.  Our data was highly susceptible to overfitting.  Using a low number of iterations and either no regularization or a regularization constant $ \lambda <= 0.001 $  provided the best results.
 
 \scalebox{0.55}{\includegraphics{charts/sgd_iterations.eps}}
 \scalebox{0.55}{\includegraphics{charts/sgd_regularization.eps}}
+
+While we were able to return acceptable results with early stopping, achieving standard errors as low as 0.76, our results were not as consistent as they were with a large number of iterations and a tuned regularization constant.  Our SGD implementation takes fairly large steps in its earliest iterations, and makes progressively smaller updates as it runs.  Since our algorithm was converging well, we chose not to adjust the step size, meaning we didn't have as much control of the test error using early stopping as we did by tuning the regularization constant.
 
 \subsection{Logistic Regression}
 
 We ran logistic regression using scikit-learn with default parameters.  The algorithm exhibited overfitting, with a training error of 0.0 and a relatively high test error of 0.9157.  We chose to focus on SGD instead of logistic regression because our data is prone to overfitting, and we were able to obtain better preliminary results and had greater control over the hyperparameters in the SGD implementation.  The total runtime was approximately 85 seconds.
 
-\subsection{SVM}
-\textit{This needs to be updated, but I'm not sure how it was run originally.  It might be better to just drop it.}
-We used the implementation of SVM in scikit-learn with radial basis function (rbf) kernel and linear kernel. We used the feature removal threshold of 1. SVM with rbf kernel took 3.3 hours to run and gave standard error of 1.09. SVM with linear kernel took 3 minutes to run and gave standard error of 1.02.
-
 \subsection{Neural Network}
-\textit{This still needs to be updated.  I am waiting for the network to finish running.} \\ \\
 The neural network is implemented using the Fast Artificial Neural Network (FANN)
-API.  With two hidden layers, with 20 neurons in the first and 10 in the second,
-we have achieved a test error rate of 0.012, when the rating is represented as a
-number between 0 and 1.0, corresponding to an average error of approximately 1.1 out of 10.  \\
+API.  With three hidden layers, with 40 neurons in the first, 20 in the second, and 10 in the last,
+we have achieved a test error rate of 0.000926, when the rating is represented as a
+number between 0 and 1.0, corresponding to an average error of approximately 0.82 out of 10.
+
 \\
+\par Our initial implementation of the neural network was quite slow, taking approximately
+12 hours to complete 100 iterations with a simple topology consisting of one hidden
+layer with 10 neurons.  This is due, in part, to the lack of support for sparse matrices in the FANN library, and the relatively large number of features we were training on.  This slowness made working with the neural network impractical, so we used PCA to reduce the number of features to 5,000 from 93,000, resulting in runtimes near 1 hour.  This feature reduction resulted in a loss of approximately 9\% of the variance in the data, artificially limiting the performance of the network.  \\
+
 \scalebox{0.55}{\includegraphics{charts/neural_network.eps}}
+\\
+\par Additionally, the neural network was susceptible to severe overfitting.  The FANN library doesn't have much built in support to prevent overfitting; the suggested approach is early stopping.  We did implement early stopping using a simple heuristic that proved to be effective, partitioning the data and stopping when the training error was falling but the test error started rising, after a period of falling.  We were able to get acceptable results using that approach, but the lack of the ability to tune regularization hyperparameters, the limited control provided by early stopping, and the loss of variance reduced the neural networks performance below the performance of simpler, more flexible models.
+\\
+\par More data and more generalized features, like the cast experience features, would likely help.  However, increasing the amount of data isn't necessarily feasible without adversely impacting the performance of the network, likely necessitating greater compute resources as well.  Other neural network implementation that provide better support for regularization and support sparse matrices would also be helpful.
 
 \section{Results}
 \smallskip
@@ -493,7 +510,7 @@ Baseline            & 1.78 \\
 Linear regression  & 0.81 \\
 Logistic regressor  & 0.92 \\
 SGD regressor       & 0.82 \\
-Neural network      & 0.83 \\
+Neural network      & 0.82 \\
 SGD with $ \lambda = 0.01 $ \& 100k iterations & 0.72 \\
 % SVM (rbf kernel)    & 1.09 \\
 % SVM (linear kernel) & 1.02 \\
@@ -511,23 +528,23 @@ Oracle              & 0.34 \\
 Linear algorithms are quick to train (60 seconds compared with over 10 hours
 for a neural network without PCA) and are not as susceptible to overfitting.
 They are also not as resource intensive to compute.
-
+\\
 \par Additionally, some benefits of the specific implementations of linear algorithms we used are:
 \begin{itemize}
     \item Easier to avoid overfitting with regularization hyperparameters
     \item Sparse matrix support, data sizes are 1GB
 \end{itemize}
-
-While we found that with the FANN neural networks:
+\bigskip
+\par While we found that with the FANN neural networks:
 \begin{itemize}
     \item Limited tunable hyperparameters
     \item Difficult to avoid overfitting -- early stopping heuristic does a decent job however
     \item Dense matrices required
 \end{itemize}
-
+\bigskip
 \par Neural Networks are able to learn more complex models, but this additional
 power can lead to overfitting and massive resource requirements.
-
+\\
 \par Reducing the feature set and stopping early helps with this, but in this
 case, these compromises result in performance comparable to the linear
 algorithms.
@@ -538,8 +555,145 @@ We used three different types of features to train the models, base features, co
 
 \par The computed features generalize very well. For example, cast experience is a feature that can be computed for every movie. Adding these computed features really helped to push the boundary of test errors. By adding the computed features, we successfully reduced test errors by more than 4\%.
 
+\section{Future work}
+Our ability to go further with Neural Networks was hampered by the amount of
+compute resources required to process our full feature set. It would be
+interesting to see what the results would be with all our features. The models
+could also be improved further with additional data, such as an actor's star
+power (through sentiment analysis of social media) or the marketing budgets of
+the movie (unavailable through IMDb). We also saw a large improvement in our
+prediction accuracy by adding generalized features such as the cast and crew
+experience feature. Other generalized features to experiment with would be the
+number of movies released at the same time.
 
 \section{Acknowledgements}
+We would like to thank Professor Liang for the opportunity to work on this
+project for CS 221, and to the course staff, particularly our project mentor
+Ilan Goodman for his guidance and support.
+
+\section{Addendum}
+As an aside, we thought it would be fun to find out what metadata would
+generate the most successful movie by looking at the highest and lowest
+weighted features generated by SGD.
+A guaranteed hit as judged by our system would be a rather strange movie: a stop-motion animated documentary based on a play about a cartoon mutant dog set in Italy made with a budget of \$60M starring Dennis Quaid. Conversely, a movie that we recommend against making would be a horror movie featuring giant animals and psychotronics.
+% \begin{center}
+% \begin{tabular}{|l|l|l|} % columns
+% \hline
+% Feature & Data & Weight \\ [0.5ex]
+% \hline
+%     Budget & \$60,000,000 & 0.03 \\
+%     Budget & \$55,000,000 & 0.03 \\
+%     Budget & \$100,000,000 & 0.03 \\
+%     Budget & \$105,000,000 & 0.02 \\
+%     Budget & \$95,000,000 & 0.02 \\
+% \hline
+%     Genre & Documentary & 0.60 \\
+%     Genre &Animation & 0.37 \\
+%     Genre &Drama & 0.25 \\
+%     Genre &Music & 0.15 \\
+%     Genre &Sport & 0.15 \\
+% \hline
+%     Release & New York in March & 0.23 \\
+%     Release & \shortstack[l]{Independent Film Festival of Boston\\in April}& 0.17 \\
+%     Release & Limited release in September & 0.15 \\
+%     Release & Austin Film Festival in October& 0.15 \\
+%     Release & New York Film Festival in October& 0.14 \\
+% \hline
+%     Keyword & stop-motion-animation & 0.29 \\
+%     Keyword & based-on-play & 0.25 \\
+%     Keyword & cartoon-dog & 0.22 \\
+%     Keyword & mutant & 0.20 \\
+%     Keyword & splatter & 0.20 \\
+%     Keyword & italy & 0.20 \\
+%     Keyword & splatter & 0.20 \\
+%     Keyword & ampersand-in-title & 0.19 \\
+%     Keyword & first-part & 0.18 \\
+%     Keyword & cliff & 0.18 \\
+% \hline
+%     Actor & Jim Fitzpatrick & 0.22 \\
+%     Actor & Ashish Vidyarthi & 0.16 \\
+%     Actor & Dennis Quaid & 0.13 \\
+%     Actor & George W. Bush & 0.12 \\
+%     Actor & Stellan Skarsgård & 0.11 \\
+%     Actor & Donald Trump & 0.11 \\
+%     Actor & William Shatner & 0.11 \\
+%     Actor & Jon Gries & 0.11 \\
+%     Actor & Alan Oppenheimer & 0.11 \\
+% \hline
+%     Actress & Tabu & 0.12 \\
+%     Actress & Bipasha Basu & 0.11 \\
+%     Actress & Divya Dutta & 0.11 \\
+%     Actress & Susan Tyrrell & 0.10 \\
+%     Actress & Kiran Juneja & 0.10 \\
+%     Actress & Milena Vukotic & 0.09 \\
+%     Actress & Dolly Ahluwalia & 0.09 \\
+%     Actress & Mona Marshall & 0.09 \\
+%     Actress & Karen Strassman & 0.09 \\
+%     Actress & Elizabeth Daily & 0.09 \\
+% \hline
+%     Producer & Sunil Lulla & 0.12 \\
+%     Producer & Siddharth Roy Kapur & 0.12 \\
+%     Producer & Aashish Singh & 0.11 \\
+%     Producer & Peter Newman & 0.11 \\
+%     Producer & Padam Bhushan & 0.10 \\
+% \hline
+%     Director & Imtiaz Ali & 0.09 \\
+%     Director & Vishal Bhardwaj & 0.09 \\
+%     Director & Don Coscarelli & 0.08 \\
+%     Director & Jonathan Demme & 0.08 \\
+%     Director & Tony Gatlif & 0.07 \\
+% \hline %inserts single line
+% \end{tabular}
+% \end{center}
+
+% \textit{Explain these}
+% \begin{itemize}
+%     \item why bollywood
+%     \item why b-grade actors
+%     \item why nyc in march
+% \end{itemize}
+%
+% \subsection{Learned weights}
+% Top 10 weights:
+% \begin{center}
+% \begin{tabular}{|l|l|l|} % columns
+% \hline
+% Feature & Data & Weight \\ [0.5ex]
+% \hline
+% Genre & Documentary & 0.60 \\
+% Crew experience ($1^{st}$ pctl) & 1 & 0.52 \\
+% Cast experience ($99^{th}$ pctl) & 1 & 0.43 \\
+% Crew experience ($10^{th}$ pctl) & 3 & 0.41 \\
+% Genre & Animation & 0.37 \\
+% Crew ratings ($75^{th}$ pctl) & 8 & 0.32 \\
+% Crew ratings (mean) & 7 & 0.32 \\
+% Crew ratings (mean) & 8 & 0.31 \\
+% Crew experience ($10^{th}$ pctl) & 1 & 0.31 \\
+% Crew ratings ($50^{th}$ pctl) & 8 & 0.30 \\
+% \hline %inserts single line
+% \end{tabular}
+% \end{center}
+%
+% Bottom 10 weights:
+% \begin{center}
+% \begin{tabular}{|l|l|l|} % columns
+% \hline
+% Feature & Data & Weight \\ [0.5ex]
+% \hline
+% Genre & Horror & -0.49 \\
+% Keyword & critically-bashed & -0.46 \\
+% Keyword & box-office-flop & -0.44 \\
+% Keyword & b-movie & -0.30 \\
+% Keyword & giant-animal & -0.26 \\
+% Cast experience & 2 & -0.22 \\
+% ($99^{th}$ pctl.) &   &       \\
+% Release & New York City (2013) & -0.22 \\
+% Release & Los Angeles (July 2013) & -0.22 \\
+% Keyword & sequel & -0.21 \\
+% Crew member & Prakash, Chinni & -0.21 \\
+% \hline %inserts single line
+% \end{tabular}
+% \end{center}
 
 % references section
 
