@@ -60,7 +60,7 @@ of success. Relatedly, Deniz and Hasbrouck \cite{greenlight} performed
 statistical analysis on the top 150 grossing movies of 2010 and found that
 genre, MPAA rating, budget, star power, adaptation from another medium, sequels
 and remakes are significant predictors
-of box office revenue. 
+of box office revenue.
 \\
 \par There are also other student projects that attempted to predict user
 ratings. One was done for the Machine Learning class (CS229) \cite{hitorflop},
@@ -145,11 +145,15 @@ component is modular, so that it is easy to tune individual algorithms.
 
 
 \section{Features}
-The feature creator system extracts raw features, and then combines some
-features with others, like actors with directors, to form compound
-"combination" features, e.g. \{movie director $\times$ movie actors\}.
-Below is a detailed description of each class of features we include along with
-an example of the features we generate.
+The features we used can be catogrized into 3 different types.
+
+\par The first type of features are the original data we get from IMDB without any modifications, such as cast, genere, etc. These features form the basis of the feature set for our Machine Learning algorithms. However, some of them don't generalize well. For example, as time goes by, new names would keep showing up in casts. Most of the weights in our models for old casts won't help in predicting ratings for new movies.
+
+\par The second type of features are combined features, such as \{movie director $\times$ movie actors\}. With these features, we want to capture the significance of relationships between some individual features. For example, an actor might work really well with a specific director. These combined features also don't generalize well in some cases.
+
+\par The third type of features are computed features such as cast experience and standarized budget. These features involved thoughtful analysis and computation. These computed features generalized pretty well across training and test samples. These features helped a lot in pushing the boundary of prediction accuracy.
+
+\par Below is a detailed description of each class of features we include along with an example of the features we generate.
 
 \subsection{Individual features}
 \subsubsection{Budget}
@@ -168,7 +172,7 @@ indicator variables).
 
 \subsubsection{Cast}
 The cast feature extractor generates indicator features for each
-cast and crew member associated with a film, for each job they 
+cast and crew member associated with a film, for each job they
 performed.  An individual could potentially appear more than once,
 if they performed different jobs, for example, if they were both
 an actor and director.  The cast roles which we include are:
@@ -319,7 +323,7 @@ runtime was less than 4 minutes.  All of our algorithms included k-means cluster
 \begin{center}
 \begin{tabular}{|r| r|} % columns
 \hline
-Num. clusters & Test Error  \\ [0.5ex] % inserts table 
+Num. clusters & Test Error  \\ [0.5ex] % inserts table
 \hline
 0 & 1.75 \\
 10 & 0.97 \\
@@ -358,7 +362,7 @@ running our baseline algorithm with each feature set individually.\\
 \begin{center}
 \begin{tabular}{|l|r r|} % columns
 \hline
-Feature & Dev error & Test error \\ [0.5ex] % inserts table 
+Feature & Dev error & Test error \\ [0.5ex] % inserts table
 \hline % inserts single horizontal line
 Budget (raw) & 5.89 & 5.87 \\ % inserting body of the table
 Budget (bucketized) & 4.62 & 4.68 \\
@@ -383,7 +387,7 @@ These are also our largest feature sets.\\
 \\
 \begin{tabular}{|l| r r r|} % columns
 \hline
-Feature             & \shortstack[c]{Num.\\vars} & \shortstack[c]{Num.\\movies} & \shortstack[c]{Feature / \\ movie}  \\ [0.5ex] % inserts table 
+Feature             & \shortstack[c]{Num.\\vars} & \shortstack[c]{Num.\\movies} & \shortstack[c]{Feature / \\ movie}  \\ [0.5ex] % inserts table
 \hline
 Budget (raw)        & 1 & 5,278 (53\%) & 1 \\ % inserting body of the table
 Budget (bucketized) & 52 & 5,278 (53\%) & 1 \\
@@ -406,7 +410,7 @@ With combined features, our feature space size is around 800,000. It takes hours
 \begin{center}
 \begin{tabular}{|l| r r|} % columns
 \hline
-$n$ & Num. features left & Standard Error  \\ [0.5ex] % inserts table 
+$n$ & Num. features left & Standard Error  \\ [0.5ex] % inserts table
 \hline
 0 & 723,000 & N/A \\
 1 & 188,000 & 0.79 \\
@@ -450,11 +454,13 @@ sparsely, and gave a standard error of 0.81.
 
 We obtained the best results running SGD with a regularization constant of 0.01 over 100,000 iterations.  Total runtime was approximately 21 minutes, and peak memory consumption was approximately 20GB.
 
-We were able to obtain a standard error of 0.7197, over 1 point better than our baseline, 
+We were able to obtain a standard error of 0.7197, over 1 point better than our baseline,
 and only 0.38 from our oracle.
 
 \subsubsection{Regularization}
-Add some text here
+
+We experimented with different regularization constants to prevent overfitting. Running SGD with a regulartization contant smaller than 0.01 leads to severe overfitting. When regularization constant is at around 0.05, test error and training error seem to converge. When regularization constant is at 0.01, although training error and test error haven't totally converged, we get the smallest training error. So we decided to use 0.01 as regularization constant for SGD.
+
 \scalebox{0.55}{\includegraphics{charts/sgd_iterations.eps}}
 \scalebox{0.55}{\includegraphics{charts/sgd_regularization.eps}}
 
@@ -469,7 +475,7 @@ We used the implementation of SVM in scikit-learn with radial basis function (rb
 \subsection{Neural Network}
 \textit{This still needs to be updated.  I am waiting for the network to finish running.} \\ \\
 The neural network is implemented using the Fast Artificial Neural Network (FANN)
-API.  With two hidden layers, with 20 neurons in the first and 10 in the second, 
+API.  With two hidden layers, with 20 neurons in the first and 10 in the second,
 we have achieved a test error rate of 0.012, when the rating is represented as a
 number between 0 and 1.0, corresponding to an average error of approximately 1.1 out of 10.  \\
 \\
@@ -480,7 +486,7 @@ number between 0 and 1.0, corresponding to an average error of approximately 1.1
 \begin{center}
 \begin{tabular}{|l | l|} % columns
 \hline
-Model               & Standard Error  \\ [0.5ex] % inserts table 
+Model               & Standard Error  \\ [0.5ex] % inserts table
 \hline
 Baseline            & 1.78 \\
 \hline
@@ -501,6 +507,7 @@ Oracle              & 0.34 \\
 
 \section{Analysis}
 
+\subsection{Algorithms}
 Linear algorithms are quick to train (60 seconds compared with over 10 hours
 for a neural network without PCA) and are not as susceptible to overfitting.
 They are also not as resource intensive to compute.
@@ -525,6 +532,11 @@ power can lead to overfitting and massive resource requirements.
 case, these compromises result in performance comparable to the linear
 algorithms.
 
+\subsection{Features}
+
+We used three different types of features to train the models, base features, combined features, and computed features. Adding combined features expanded the feature space size by more than 4 times, causing a few models to overfit. To handle overfitting and improve performance, we added a preprocess step to remove less common features. By removing the features that appear less than 3 times among all movies, we effectively reduced the feature space size by a factor of 5. However, one downside of the base features and combined features is they don't generalize too well. A lot of these features only appear a few times through out the whole dataset.
+
+\par The computed features generalize very well. For example, cast experience is a feature that can be computed for every movie. Adding these computed features really helped to push the boundary of test errors. By adding the computed features, we successfully reduced test errors by more than 4\%.
 
 
 \section{Acknowledgements}
