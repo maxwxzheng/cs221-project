@@ -409,6 +409,7 @@ Cast experience & 1,230 & 9,886 (99\%) & 94 \\
 
 \subsection{Feature pruning}
 With combined features, our feature space size is around 800,000. It takes hours to train a Linear Regression Model using scikit-learn \cite{scikit} on such a large sample space. We did some experiments on feature removal to improve algorithm performance.
+\\
 \par In our experiments, we removed all the features that appear less or equal to $n$ times in the training data before training a model. We measured the number of features left after removal and the standard error on test set.\\
 \begin{center}
 \begin{tabular}{|l| r r|} % columns
@@ -452,8 +453,8 @@ capturing 91\% of the variance in the data.
 We used the implementation of Linear Regression in scikit-learn with default
 parameters. The algorithm took 6 seconds to run when the data was represented
 sparsely, and gave a standard error of 0.81.
-
-Linear regression was somewhat susceptible to overfitting, and is not tunable, so we used
+\\
+\par Linear regression was somewhat susceptible to overfitting, and is not tunable, so we used
 linear regression primarily to quickly check work in progress,
 
 \subsection{Stochastic Gradient Descent}
@@ -480,16 +481,16 @@ The neural network is implemented using the Fast Artificial Neural Network (FANN
 API.  With three hidden layers, with 40 neurons in the first, 20 in the second, and 10 in the last,
 we have achieved a test error rate of 0.000926, when the rating is represented as a
 number between 0 and 1.0, corresponding to an average error of approximately 0.82 out of 10. 
-
-Our initial implementation of the neural network was quite slow, taking approximately
+\\
+\par Our initial implementation of the neural network was quite slow, taking approximately
 12 hours to complete 100 iterations with a simple topology consisting of one hidden
 layer with 10 neurons.  This is due, in part, to the lack of support for sparse matrices in the FANN library, and the relatively large number of features we were training on.  This slowness made working with the neural network impractical, so we used PCA to reduce the number of features to 5,000 from 93,000, resulting in runtimes near 1 hour.  This feature reduction resulted in a loss of approximately 9\% of the variance in the data, artificially limiting the performance of the network.  \\
 
 \scalebox{0.55}{\includegraphics{charts/neural_network.eps}}
-
-Additionally, the neural network was susceptible to severe overfitting.  The FANN library doesn't have much built in support to prevent overfitting; the suggested approach is early stopping.  We did implement early stopping using a simple heuristic that proved to be effective, partitioning the data and stopping when the training error was falling but the test error started rising, after a period of falling.  We were able to get acceptable results using that approach, but the lack of the ability to tune regularization hyperparameters, the limited control provided by early stopping, and the loss of variance reduced the neural networks performance below the performance of simpler, more flexible models.
-
-More data and more generalized features, like the cast experience features, would likely help.  However, increasing the amount of data isn't necessarily feasible without adversely impacting the performance of the network, likely necessitating greater compute resources as well.  Other neural network implementation that provide better support for regularization and support sparse matrices would also be helpful.
+\\
+\par Additionally, the neural network was susceptible to severe overfitting.  The FANN library doesn't have much built in support to prevent overfitting; the suggested approach is early stopping.  We did implement early stopping using a simple heuristic that proved to be effective, partitioning the data and stopping when the training error was falling but the test error started rising, after a period of falling.  We were able to get acceptable results using that approach, but the lack of the ability to tune regularization hyperparameters, the limited control provided by early stopping, and the loss of variance reduced the neural networks performance below the performance of simpler, more flexible models.
+\\
+\par More data and more generalized features, like the cast experience features, would likely help.  However, increasing the amount of data isn't necessarily feasible without adversely impacting the performance of the network, likely necessitating greater compute resources as well.  Other neural network implementation that provide better support for regularization and support sparse matrices would also be helpful.
 
 \section{Results}
 \smallskip
@@ -540,6 +541,22 @@ power can lead to overfitting and massive resource requirements.
 \par Reducing the feature set and stopping early helps with this, but in this
 case, these compromises result in performance comparable to the linear
 algorithms.
+
+\section{Future work}
+Our ability to go further with Neural Networks was hampered by the amount of
+compute resources required to process our full feature set. It would be
+interesting to see what the results would be with all our features. The models
+could also be improved further with additional data, such as an actor's star
+power (through sentiment analysis of social media) or the marketing budgets of
+the movie (unavailable through IMDb). We also saw a large improvement in our
+prediction accuracy by adding generalized features such as the cast and crew
+experience feature. Other generalized features to experiment with would be the
+number of movies released at the same time.
+
+\section{Acknowledgements}
+We would like to thank Professor Liang for the opportunity to work on this
+project for CS 221, and to the course staff, particularly our project mentor
+Ilan Goodman for his guidance and support.
 
 \section{Addendum}
 As an aside, we thought it would be fun to find out what metadata would
